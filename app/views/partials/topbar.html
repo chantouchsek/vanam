@@ -1,0 +1,62 @@
+<!-- LOGO -->
+<div class="topbar-left">
+  <a class="logo">
+  <span>
+  <!-- <img src="images/logo.png" alt="" height="60"> -->
+    <img ng-if="app.data.user.company.url_logo" ng-src="http://api.utiledev.vanam.fr/{{ app.data.user.company.url_logo }}"  height="60" alt="{{ app.data.user.company.name }}">
+    <h3 ng-if="!app.data.user.company.url_logo" class="m-t-md">{{ app.data.user.company.name }}</h3>
+
+  </span>
+  <i>
+  <h3>V</h3>
+  </i>
+  </a>
+</div>
+<!-- Button mobile view to collapse sidebar menu -->
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <!-- Navbar-left -->
+    <ul class="nav navbar-nav navbar-left">
+      <li>
+        <button class="button-menu-mobile open-left waves-effect waves-light">
+          <i class="mdi mdi-menu"></i>
+        </button>
+      </li>
+    </ul>
+    <!-- Right(Notification) -->
+    <ul class="nav navbar-nav navbar-right">
+      <li>
+        <a href="#" class="right-menu-item dropdown-toggle dropdown-toggle-devis">
+            
+            <i class="fa fa-file-text-o"></i>
+            <span class="badge up bg-primary">{{ app.devis.length }}</span>
+        </a>
+        <div class="dropdown-menu dropdown-devis dropdown-menu-right w-xl" data-ng-include=" 'modules/devis/box.html' ">
+            
+        </div> 
+      </li>
+       
+      <li class="dropdown user-box">
+        <a href="" class="dropdown-toggle waves-effect waves-light user-link" data-toggle="dropdown" aria-expanded="true">
+            <span class="text-white">{{app.data.user.email }}</span>
+          
+          <span class="avatar-sm-box bg-info m-t" style="margin-top: 7px;" ng-if="app.data.user.role_id == 4" >P</span>
+
+          <img ng-src="http://api.utiledev.vanam.fr/{{ app.data.user.url_picture }}" ng-if="app.data.user.role_id != 4 && app.data.user.url_picture" alt="{{app.data.user.name }}" class="img-circle user-img">
+          <img ng-src="images/user.png" ng-if="app.data.user.role_id != 4 && !app.data.user.url_picture" alt="{{app.data.user.name }}" class="img-circle user-img">
+
+        </a>
+        <ul class="dropdown-menu dropdown-menu-right arrow-dropdown-menu arrow-menu-right user-list notify-list">
+          <li>
+            <h5>{{app.data.user.firstname }} {{app.data.user.name }}</h5>
+          </li>
+          <li><a ui-sref="app.profile"><i class="ti-user m-r-5"></i> Profile</a></li>
+          <li><a ng-click="app.logout()"><i class="ti-power-off m-r-5"></i> Logout</a></li>
+        </ul> 
+      </li>
+    </ul>
+    <!-- end navbar-right -->
+  </div>
+  <!-- end container -->
+</div>
+<!-- end navbar -->

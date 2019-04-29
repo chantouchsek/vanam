@@ -1,0 +1,411 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Produits</h4>
+      <div class="devis" data-drop="true" ng-model="vm.devis" jqyoui-droppable="{beforeDrop: 'vm.beforeDrop'}">
+        <div class="drop"></div>
+      </div>
+      <div class="pull-right" ng-if="app.data.user.role_id != 4 && app.data.user.role_id != 5">
+        <a class="btn btn-primary btn-sm waves-effect waves-light" ui-sref="app.produits.add">Ajouter produit</a>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<form class="card-box" ng-submit="vm.getProduits()">
+  <div class="dropdown pull-right" style=" top: -10px ">
+    <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
+      <h3 class="m-0 text-muted"><i class="mdi mdi-dots-horizontal"></i></h3>
+    </a>
+    <div class="dropdown-menu" role="menu" style="    margin-top: -34px;margin-right: 30px;min-width: 50px;box-shadow: none;">
+      <div title="Envoyer par mail" ng-if="app.data.user.role_id != 4 && app.data.user.role_id != 5" class="btn btn-xs btn-default" data-toggle="modal" data-target="#mail"><i class="fa fa-envelope"></i></div>
+      <div title="Exporter PDF / EXCEL" class="btn btn-xs btn-default" data-toggle="modal" data-target="#exports"><i class="fa fa-file"></i></div>
+    </div>
+  </div>
+  <div class="clearfix"></div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group" ng-init="vm.getGenders()">
+        <div ng-dropdown-multiselect="" events="vm.eventsGenders" selected-model="vm.search.genders" options="vm.genders" translation-texts="{ searchPlaceholder:'Recherche', buttonDefaultText:'Genre', dynamicButtonTextSuffix:'sélectionnés', checkAll:'Selectionner tout genre(s)' }" extra-settings="vm.multiSelectSettings"></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group" ng-init="vm.getCategories()">
+        <div ng-dropdown-multiselect="" events="vm.eventsCategories" selected-model="vm.search.categories" options="vm.categories" translation-texts="{ searchPlaceholder:'Recherche', buttonDefaultText:'Catégorie', dynamicButtonTextSuffix:'sélectionnés', checkAll:'Selectionner toute catégorie(s)' }" extra-settings="vm.multiSelectSettings"></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group" ng-init="vm.getMarques()">
+        <div ng-dropdown-multiselect="" events="vm.eventsBrands" selected-model="vm.search.brands" options="vm.marques" translation-texts="{ searchPlaceholder:'Recherche', buttonDefaultText:'Marque', dynamicButtonTextSuffix:'sélectionnés', checkAll:'Selectionner toute marque(s)' }" extra-settings="vm.multiSelectSettings"></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group" ng-init="vm.getSports()">
+        <div ng-dropdown-multiselect="" events="vm.eventsSports" selected-model="vm.search.sports" options="vm.sports" translation-texts="{ searchPlaceholder:'Recherche', buttonDefaultText:'Sports', dynamicButtonTextSuffix:'sélectionnés', checkAll:'Selectionner tout sport(s)' }" extra-settings="vm.multiSelectSettings"></div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.search.ref_desc" name="reference">
+        <label for="">Référence ou description</label>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="" class="actif">Quantité</label>
+        <rzslider rz-slider-model="vm.search.quantite" rz-slider-high="vm.optionsSlider.max" rz-slider-options="vm.optionsSlider"></rzslider>
+      </div>
+    </div>
+  </div>
+  <div ng-hide="app.data.user.role_id == 4" ng-click="avancee=!avancee" class="btn btn-default btn-xs">Recherche avancée</div>
+  <div class="row m-t m-b-lg" ng-if="avancee">
+    <div class="col-md-4">
+      <h5 class="bg-primary wrapper-sm">Mouvement entrée</h5>
+      <div class="form-group">
+        <input type="text" class="form-control" ng-model="vm.search.entry_event_information" placeholder=" ">
+        <label for="">Numéro ou nom du mouvement d'entrée</label>
+      </div>
+      <div class="row">
+        <div class="col-md-8 form-group">
+          <label for="" class="actif m-l">Date</label>
+          <input type="date" class="form-control" ng-model="vm.search.entry_event_date" placeholder=" ">
+        </div>
+        <div class="col-md-4">
+          <input type="checkbox" id="switch_calendar" ng-true-value="'<'" ng-false-value="'>'" ng-model="vm.search.entry_event_after_before" switch="bool" />
+          <label class="m-t-md" for="switch_calendar" data-on-label="Avant" data-off-label="Aprés"></label>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <h5 class="bg-primary wrapper-sm">Emplacement</h5>
+      <div class="row m-b-md">
+        <!-- <div class="col-xs-4">
+          <div class="form-group">
+            <select class="form-control" ng-model="vm.search.zonage_city_id">
+              <option class="hidden" value="">MRS</option>
+              <option value="{{ value.id }}" ng-repeat="(key, value) in vm.zonages track by $index">{{ value.trigram }}</option>
+            </select>
+          </div>
+        </div> -->
+        <div class="col-xs-6">
+          <div class="form-group">
+            <input type="text" class="form-control  m-r" placeholder=" " ng-model="vm.search.aisle">
+            <label>Ex : A12</label>
+          </div>
+        </div>
+        <div class="col-xs-6">
+          <div class="form-group">
+            <input type="text" class="form-control m-r" placeholder=" " ng-model="vm.search.palette">
+            <label>Ex : PAL9</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <h5 class="bg-primary wrapper-sm">Divers</h5>
+      
+      <div class="form-group m-b-lg col-xs-6">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.search.color">
+        <label for="">COULEUR</label>
+      </div>
+      <div class="form-group col-xs-6" ng-init="vm.getGammes()">
+        <div ng-dropdown-multiselect="" events="vm.eventsGammes" selected-model="vm.search.gammes" options="vm.gammes" translation-texts="{ searchPlaceholder:'Recherche', buttonDefaultText:'Gamme', dynamicButtonTextSuffix:'sélectionnés', checkAll:'Selectionner tout gamme(s)' }" extra-settings="vm.multiSelectSettings"></div>
+      </div>
+      <div class="row m-n col-md-7 no-padder">
+        <div class="col-md-7 no-padder">
+          Quantités épuisées
+        </div>
+        <div class="col-md-4 no-padder">
+          <input type="checkbox" id="switch1" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.search.qtr_exhausted" switch="bool" />
+          <label for="switch1" data-on-label="Oui" data-off-label="Non"></label>
+        </div>
+      </div>
+      <div class="row m-n col-md-5 no-padder">
+        <div class="col-md-7 no-padder">
+          Pas d'image
+        </div>
+        <div class="col-md-5 no-padder">
+          <input type="checkbox" id="switch2" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.search.is_no_pictures" switch="bool" />
+          <label for="switch2" data-on-label="Oui" data-off-label="Non"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-right">
+
+    <div class="inline w m-r"> <b>{{ vm.produits.length }}</b> produits trouvés </div>
+    <button type="reset" ng-click="vm.resetSearch()" class="btn btn-sm btn-danger">ANNULER</button>
+    <button type="submit" class="btn btn-sm btn-success">CHERCHER</button>
+    <div class="btn btn-sm btn-info" ng-click="vm.addToDevis(vm.produits| filter:{ selected: true })">AJOUTER SELECTION AU DEVIS EN COURS</div>
+  </div>
+</form>
+<div class="text-right" ng-init="type = 'list'; toogle = 0 ">
+  <div class="btn-group">
+    <div class="btn btn-default waves-effect" ng-click="type='list'" ng-class="{ 'btn-info' :  type=='list' }"><i class="fa fa-th-list"></i></div>
+    <div class="btn btn-default waves-effect" ng-click="type='grid'" ng-class="{ 'btn-info' :  type=='grid' }"><i class="fa fa-th-large"></i></div>
+  </div>
+</div>
+<div class="card-box table-responsive" ng-show="type=='list'" ng-dblclick="toogle=!toogle">
+  <table id="liste-produits" class="table table-striped" style="width: 100%" ng-init="vm.getUsers()">
+    <thead>
+      <tr>
+        <th>
+          <div class="checkbox-style ">
+            <input type="checkbox" id="check-all" />
+            <label for="check-all"></label>
+          </div>
+        </th>
+        <th>Reférence</th>
+        <th ng-show="toogle">EMPL</th>
+        <th>Description</th>
+        <th>Catégorie</th>
+        <th>Marque</th>
+        <th>Genre</th>
+        <th ng-show="toogle">Sport</th>
+        <th ng-show="toogle">Couleur</th>
+        <th ng-show="toogle">QTR</th>
+        <th>Qtt</th>
+        <th width="160" class="text-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody> 
+      <tr ng-repeat="(key, value) in vm.produits track by $index" data-drag="true" data-jqyoui-options="{revert: 'invalid', helper:'clone',appendTo: 'body', containment: 'window', cursor: 'move'}" jqyoui-draggable="{animate:true, placeholder:'keep', onStart:'vm.registerDraggedItem(value)'}" ng-model="value">
+        <td>
+          <div class="checkbox-style ">
+            <input type="checkbox" ng-model="value.selected" id="check-{{$index}}" />
+            <label for="check-{{$index}}"></label>
+          </div>
+        </td>
+        <td>
+          <div>{{ value.reference }}</div>
+        </td>
+        <td width="120" ng-show="toogle">
+          <span ng-hide="editLocation" ng-click="editLocation=1">{{value.trigram}}{{value.aisle}}{{value.palette || '--' }}</span>
+          <div ng-show="editLocation">
+            <div class="form-group inline w-112">
+              <input type="text" class="form-control  m-r" placeholder=" " ng-model="value.aisle" ng-keydown="$event.keyCode === 13 && vm.updateZonage(value)">
+              <label>Ex : A12</label>
+            </div>
+            <div class="form-group inline w-112 ">
+              <input type="text" class="form-control m-r" placeholder=" " ng-model="value.palette" ng-keydown="$event.keyCode === 13 && vm.updateZonage(value)">
+              <label>Ex : PAL9</label>
+            </div>
+          </div>
+        </td>
+        <td style="width: 400px;">{{value.description}}</td>
+        <td>{{value.categorie}}</td>
+        <td>{{value.brand}}</td>
+        <td>{{value.gender}}</td>
+        <td ng-show="toogle">{{value.sport}}</td>
+        <td ng-show="toogle">{{value.color}}</td>
+        <td ng-show="toogle">{{value.qtr|| '0'}}</td>
+        <td>{{value.qtt|| '0' }}</td>
+        <td align="right" style="width: 240px;">
+          <a class="btn btn-xs btn-info" ui-sref="app.produits.details({ id: value.id })"><i class="fa fa-eye"></i></a>
+          <div class="btn btn-xs btn-primary" ui-sref="app.produits.details({ id: value.id, tab:'images' })"><i class="fa fa-camera"></i></div>
+          <div ng-if="app.data.user.role_id != 4 && app.data.user.role_id != 5" class="btn btn-xs btn-danger"  ng-click="vm.deleteProduct( value.id )"><i class="fa fa-trash"></i></div>
+          <div ng-if="app.data.user.role_id != 4 && app.data.user.role_id != 5" class="btn btn-xs btn-default" ui-sref="app.produits.details({ id: value.id, tab:'stats' })"><i class="fa fa-line-chart"></i></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+<div class="row" ng-show="type=='grid'" ng-init="currentPage=0; vm.length_grid='3'">
+  <div class="col-md-4" ng-repeat="(key, value) in vm.produits | startFrom:currentPage*vm.length_grid | limitTo:vm.length_grid track by $index" data-drag="true" data-jqyoui-options="{revert: 'invalid', helper:'clone',appendTo: 'body', containment: 'window', cursor: 'move'}" jqyoui-draggable="{animate:true, placeholder:'keep'}" ng-model="value">
+    <div class="text-center card-box" style="min-height: 350px">
+      <div class="checkbox-style pull-left">
+        <input type="checkbox" ng-model="value.selected" id="check-grid-{{$index}}" />
+        <label for="check-grid-{{$index}}"></label>
+      </div>
+      <div class="dropdown pull-right">
+        <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
+          <h3 class="m-0 text-muted"><i class="mdi mdi-dots-horizontal"></i></h3>
+        </a>
+        <div class="dropdown-menu" style="text-align:center" role="menu">
+          <a class="btn btn-xs btn-info" ui-sref="app.produits.details({ id: value.id })"><i class="fa fa-eye"></i></a>
+          <a class="btn btn-xs btn-primary" ui-sref="app.produits.details({ id: value.id, tab:'images' })"><i class="fa fa-camera"></i></a>
+          <div ng-if="app.data.user.role_id != 4 && app.data.user.role_id != 5" ng-click="vm.deleteProduct( value.id )" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i></div>
+          <a ng-if="app.data.user.role_id != 4 && app.data.user.role_id != 5" ui-sref="app.produits.details({ id: value.id, tab:'stats' })" ui-sref="app.produits.details({ id: value.id, tab:'stats' })" class="btn btn-xs btn-default"><i class="fa fa-line-chart"></i></a>
+        </div>
+      </div>
+      <div class="clearfix"></div>
+      <div class="member-card">
+        <div class="thumb-xl member-thumb m-b-10 center-block">
+          <img ng-if="value.url_picture" ng-src="http://api.utiledev.vanam.fr/{{ value.url_picture  }}" class="img img-responsive">
+          <img ng-if="!value.url_picture" src="http://myaco.lemans.org/GED/content/4805C9CE-ECF4-4232-AEF4-3580948695DC.jpg" class="img img-responsive">
+        </div>
+        <div class="">
+          <p class="text-muted"> <span class="toCopy">{{ value.reference }}</span> <span> | </span> <span class="text-pink toCopy">{{value.categorie}}</span></p>
+        </div>
+        <form name="form">
+          <div class="form-group inline w-70">
+            <input type="text" class="form-control m-r" name="aisle" placeholder=" " ng-model="value.aisle" required="" ng-keydown="$event.keyCode === 13 && vm.updateZonage(value)">
+            <label>Aisle</label>
+          </div>
+          <div class="form-group inline w-70 ">
+            <input type="text" class="form-control m-r" name="palette" placeholder=" " ng-model="value.palette" required="" ng-keydown="$event.keyCode === 13 && vm.updateZonage(value)">
+            <label>Palette</label>
+          </div>
+        </form>
+        <p>
+          <span class="badge badge-info">{{value.brand}}</span>
+          <span class="badge badge-primary">{{value.gender}}</span>
+          <span class="badge badge-warning">{{value.sport}}</span>
+          <span class="badge badge-default">{{value.color}}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="text-right padder clearfix" ng-show="vm.produits.length>=6 &&  type=='grid'">
+  
+  <label>Afficher 
+    <select ng-model="vm.length_grid" ng-change="currentPage=0">
+      <option value="3">3</option>
+      <option value="6">6</option>
+      <option value="9">9</option>
+      <option value="12">12</option>
+      <option value="30">30</option>
+      <option value="300">300</option>
+      <option value="900">900</option>
+    </select> éléments
+  </label>
+
+  <button class="btn btn-default btn-sm" ng-disabled="currentPage == 0" ng-click="currentPage=currentPage-1">
+    Précédent
+  </button>
+
+  {{currentPage+1}}/{{ (vm.produits.length/vm.length_grid)<1?1:(vm.produits.length/vm.length_grid) | number:0 }}
+  <button class="btn btn-default btn-sm" ng-disabled="currentPage >= vm.produits.length/vm.length_grid - 1" ng-click="currentPage=currentPage+1">
+    Suivant
+  </button>
+</div>
+
+<div class="modal fade" id="exports" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Export</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div class="m-b m-l-lg m-r-lg">
+            <div class="checkbox" ng-init="vm.search.is_images=1">
+              <input id="checkbox1" ng-model="vm.search.is_images" ng-true-value="1" ng-false-value="0" checked="" type="checkbox">
+              <label for="checkbox1">Images</label>
+            </div>
+            <div class="checkbox" ng-init="vm.search.purchase_price=0">
+              <input id="checkbox2" ng-model="vm.search.purchase_price" ng-true-value="1" ng-false-value="0" type="checkbox">
+              <label for="checkbox2">Prix achat</label>
+            </div>
+            <div class="checkbox" ng-init="vm.search.rate_price=0">
+              <input id="checkbox3" ng-model="vm.search.rate_price" type="checkbox" ng-true-value="1" ng-false-value="0">
+              <label for="checkbox3">Prix vente public</label>
+            </div>
+            <div class="checkbox" ng-init="vm.search.public_price=0">
+              <input id="checkbox4" ng-model="vm.search.public_price" type="checkbox" ng-true-value="1" ng-false-value="0">
+              <label for="checkbox4">Prix tarif</label>
+            </div>
+            <div class="checkbox" ng-init="vm.search.vanam_price=1">
+              <input id="checkbox5" ng-model="vm.search.vanam_price" type="checkbox" ng-true-value="1" ng-false-value="0">
+              <label for="checkbox5">Prix vente Vanam</label>
+            </div>
+            <label style="margin-left: -20px;">
+              Type d’affichage des tailles
+            </label>
+            <div class="radio">
+              <input id="radio1" name="tailles" type="radio" ng-model="vm.search.format_stock" value="1">
+              <label for="radio1" style="padding-left: 21px; font-weight: bold;">Tailles dans X colonnes</label>
+            </div>
+            <div class="radio">
+              <input id="radio2" name="tailles" type="radio" ng-model="vm.search.format_stock" value="2">
+              <label for="radio2" style="padding-left: 21px; font-weight: bold;">Tailles dans une colonne</label>
+            </div>
+            <div class="checkbox">
+              <input id="checkbox7" type="checkbox" ng-true-value="1" ng-false-value="0">
+              <label for="checkbox7">Emplacement</label>
+            </div>
+            <div class="checkbox" ng-if="vm.search.format" ng-init="vm.search.is_by_zone=0">
+              <input id="checkbox8" ng-model="vm.search.is_by_zone" type="checkbox" ng-true-value="1" ng-false-value="0">
+              <label for="checkbox8">Ranger par zone</label>
+            </div>
+            <div class="text-center m-b-md" ng-init="vm.search.format=1">
+              <button type="button" ng-disabled="vm.search.format==1" ng-class="{'btn-success': vm.search.format==1}" ng-click="vm.search.format=1" class="btn btn-default waves-effect m-r"><i class="fa fa-file-pdf-o"></i> PDF</button>
+              <button type="button" ng-disabled="vm.search.format==2" ng-class="{'btn-success': vm.search.format==2}" ng-click="vm.search.format=2" class="btn btn-default waves-effect"><i class="fa fa-file-excel-o"></i> EXCEL</button>
+            </div>
+            <div class="text-center">
+              <div class="btn btn-sm btn-success" ng-click="vm.getProduits(vm.search.format)"> Générer </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="mail" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Envoyer email</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div class="card-box m-n">
+
+              <form role="form">
+                <div class="form-group">
+                  <input type="email" name="a" class="form-control w-full" placeholder=" " ng-model="vm.mail.to_email">
+                  <label for="">À</label>
+                </div>
+                <div class="form-group">
+                  <div class="row">
+                    <div class="col-md-6 form-group">
+                      <input type="email" name="css" class="form-control w-full" placeholder=" " ng-model="vm.mail.cc">
+                      <label for="">Cc</label>
+                    </div>
+                    <div class="col-md-6 form-group">
+                      <input type="email" name="bcc" class="form-control w-full" placeholder=" " ng-model="vm.mail.bcc">
+                      <label for="">Bcc</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control w-full" placeholder=" " ng-model="vm.mail.sujet">
+                  <label for="">Sujet</label>
+                </div>
+                <div class="form-group">
+                  <textarea class="summernote form-control" id="mail_contenu"></textarea>
+                </div>
+                <div class="btn-toolbar form-group m-b-0">
+                  <div class="row" style="display: inline-block; width:80%">
+                    <div class="col-md-3">
+                      <label class="m-t-xs">Pièce(s) jointe(s) : </label>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="attachment">
+                         <i class="fa fa fa-file-pdf-o m-r-10"></i> <span>produits.pdf</span>
+                      </div>     
+                    </div>
+                  </div>
+
+                  <div class="pull-right">
+                    <button type="button" class="btn btn-danger waves-effect waves-light m-r-5"><i class="fa fa-trash-o"></i></button>
+                    <button class="btn btn-success waves-effect waves-light" ng-click="vm.sendMail()"> <span>Envoyer</span> <i class="fa fa-send m-l-10"></i> </button>
+                  </div>
+                </div>
+              </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

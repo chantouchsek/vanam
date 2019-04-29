@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Marques</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="card-box w-xxl no-padder">
+  <form class="row wrapper-sm" ng-submit="vm.addBrand();">
+    <div class="col-md-6">
+      <div class="form-group m-n" ng-init="vm.brand.marge = 1.4">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.brand.name" required="">
+        <label>Marque</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group m-n" ng-init="vm.brand.marge = 1.4">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.brand.marge" required="">
+        <label>Marge</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-success">Ajouter</button>
+    </div>
+  </form>
+</div>
+<div class="card-box table-responsive">
+  <table id="marques" class="table table-striped" ng-init="vm.getBrands()">
+    <thead>
+      <tr>
+        <th width="80"></th>
+        <th>Nom</th>
+        <th>Marge</th>
+        <th width="60">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="(key, value) in vm.brands track by $index">
+        <td>
+          <div class="btn btn-xs btn-rounded hidden pull-left btn-danger" ng-click="vm.deleteLogo( value.id )" ng-show="value.picture" style="position: absolute;"><i class="fa fa-times"></i></div>
+          <img height="50" width="50" class="img b-a img{{ value.id }}" ng-click="vm.img_edit = value.id" src="images/default.png" ng-if="!value.picture" alt="">
+          <img height="50" width="50" class="img b-a img{{ value.id }}" ng-click="vm.img_edit = value.id" ng-src="http://api.utiledev.vanam.fr{{ value.picture}}" ng-if="value.picture" alt="">
+        </td>
+        <td>
+          <span ng-hide="edit">{{ value.name }}</span>
+          <input ng-show="edit" type="text" ng-model="value.name" ng-keydown="$event.keyCode === 13 && vm.updateBrand(value)" class="form-control">
+        </td>
+        <td>
+          <span ng-hide="edit">{{ value.marge }}</span>
+          <input ng-show="edit" type="text" ng-model="value.marge" ng-keydown="$event.keyCode === 13 && vm.updateBrand(value)" class="form-control">
+        </td>
+        <td>
+          <div class="btn btn-xs btn-info" ng-hide="edit" ng-click="edit=true"><i class="fa fa-pencil"></i></div>
+          <div class="btn btn-xs btn-success" ng-click="vm.updateBrand(value); edit=false;" ng-show="edit" ng-click="edit=false"><i class="fa fa-check"></i></div>
+          <div class="btn btn-xs btn-danger" ng-click="vm.deleteBrand(value.id)"><i class="fa fa-trash"></i></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+    <input type="file" name="picture" class="form-control hidden ">
+
+</div>

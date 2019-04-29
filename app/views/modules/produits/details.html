@@ -1,0 +1,442 @@
+<div class="row" ng-init="vm.getProduitById(); vm.getCategories();vm.getMarques();vm.getGenders();vm.getSports();vm.getGammes();vm.getSports();vm.getZonages()">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Détails produit</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="card-box">
+  <ul class="nav nav-tabs tabs-bordered">
+    <li class="active">
+      <a href="#informations" data-toggle="tab" aria-expanded="true">
+        <span class="visible-xs"><i class="fa fa-home"></i></span>
+        <span class="hidden-xs">Informations</span>
+      </a>
+    </li>
+    <li>
+      <a href="#images" data-toggle="tab" aria-expanded="false">
+        <span class="visible-xs"><i class="fa fa-camera"></i></span>
+        <span class="hidden-xs">Images</span>
+      </a>
+    </li>
+    <li>
+      <a href="#stock" data-toggle="tab" aria-expanded="false">
+        <span class="visible-xs"><i class="fa fa-trello"></i></span>
+        <span class="hidden-xs">Stock</span>
+      </a>
+    </li>
+    <li class="disabled" ng-if="vm.data.user.role_id < 4">
+      <a href="#" data-toggle="tab" aria-expanded="false">
+        <span class="visible-xs"><i class="fa fa-first-order"></i></span>
+        <span class="hidden-xs">EAN</span>
+      </a>
+      <li>
+        <a href="#stats" ng-if="vm.data.user.role_id < 4" data-toggle="tab" aria-expanded="false">
+          <span class="visible-xs"><i class="mdi mdi-view-dashboard"></i></span>
+          <span class="hidden-xs">Stats</span>
+        </a>
+      </li>
+      <li class="disabled" ng-if="vm.data.user.role_id < 4">
+        <a href="#" data-toggle="tab" aria-expanded="false">
+          <span class="visible-xs"><i class="fa fa-globe"></i></span>
+          <span class="hidden-xs">Web</span>
+        </a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="informations">
+        <form name="form" id="form" ng-submit="vm.updateProduit()">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <input type="text" name="reference" ng-disabled="vm.data.user.role_id == 4" class="form-control" placeholder=" " ng-model="vm.produit.reference" required>
+                <label>Référence*</label>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="form-group">
+                <input type="text" name="description" ng-disabled="vm.data.user.role_id == 4" class="form-control w-full" placeholder=" " ng-model="vm.produit.description" required=>
+                <label>Description*</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="" class="actif">Catégorie</label>
+                <select class="form-control" ng-disabled="vm.data.user.role_id == 4" name="category_id" required="" ng-model="vm.produit.category_id">
+                  <option value="" class="hidden">Catégorie*</option>
+                  <option value="{{ value.id }}" ng-repeat="(key, value) in vm.categories track by $index">{{ value.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="" class="actif">Gamme</label>
+                <select class="form-control" ng-disabled="vm.data.user.role_id == 4" required="" name="range_id" ng-model="vm.produit.range_id">
+                  <option value="" class="hidden">Gamme*</option>
+                  <option value="{{ value.id }}" ng-repeat="(key, value) in vm.gammes track by $index">{{ value.name }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="" class="actif">Marque</label>
+                <select class="form-control" ng-disabled="vm.data.user.role_id == 4" required="" name="brand_id" ng-model="vm.produit.brand_id" ng-disabled="vm.produit.is_ok_change_range== false">
+                  <option value="" class="hidden">Marque*</option>
+                  <option value="{{ value.id }}" ng-repeat="(key, value) in vm.marques track by $index">{{ value.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="" class="actif">Genre</label>
+                <select class="form-control" ng-disabled="vm.data.user.role_id == 4" required="" name="gender_id" ng-model="vm.produit.gender_id">
+                  <option value="" class="hidden">Genre*</option>
+                  <option value="{{ value.id }}" ng-repeat="(key, value) in vm.genders track by $index">{{ value.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="" class="actif">Sport</label>
+                <select class="form-control" ng-disabled="vm.data.user.role_id == 4" ng-model="vm.produit.sport_id">
+                  <option value="" class="hidden">Sport</option>
+                  <option value="{{ value.id }}" ng-repeat="(key, value) in vm.sports track by $index">{{ value.name }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <input type="text" name="couleur" ng-disabled="vm.data.user.role_id == 4" class="form-control" placeholder=" " ng-model="vm.produit.color">
+                <label>Couleur</label>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-md-8" ng-if="vm.data.user.role_id < 3">
+              <h4 class="text-info w-70" ng-click="show_price=!show_price">Prix</h4>
+              <div class="form-group inline w-sm">
+                <input type="text" class="form-control" placeholder=" " ng-model="vm.produit.sale_public_price">
+                <label>Prix vente public</label>
+              </div>
+              <div class="form-group inline w-sm">
+                <input type="text" class="form-control" placeholder=" " ng-model="vm.produit.sale_rate_public">
+                <label>Prix vente tarif</label>
+              </div>
+              <div class="form-group inline w-sm">
+                <input type="text" class="form-control" placeholder=" " ng-model="vm.produit.sale_vanam_price">
+                <label>Prix vente VANAM</label>
+              </div>
+              <div class="" ng-show="show_price">
+                <div>
+                  <span>Prix achat min : {{vm.produit.min_buying_price}} €</span>
+                </div>
+                <div>
+                  <span>Prix achat max : {{vm.produit.max_buying_price}} €</span>
+                </div>
+              </div>
+              <div class="popup-prix" ng-show="vm.showPrice">
+                <div>
+                  <span>{{vm.produit.min_buying_price}}</span>
+                </div>
+                <div>
+                  <span>{{vm.produit.max_buying_price}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" ng-if="vm.data.user.role_id != 4">
+            <div class="col-md-4">
+              <h4 class="text-info" ng-click="vm.showprice()">Emplacement</h4>
+              <div class="row">
+                <!-- <div class="col-xs-4">
+                  <div class="form-group">
+                    <select class="form-control" ng-model="vm.produit.zonage_city_id">
+                      <option class="hidden" value="">MRS</option>
+                      <option value="{{ value.id }}" ng-repeat="(key, value) in vm.zonages track by $index">{{ value.trigram }}</option>
+                    </select>
+                  </div>
+                </div> -->
+                <div class="col-xs-6">
+                  <div class="form-group">
+                    <input type="text" class="form-control  m-r" ng-disabled="vm.data.user.role_id == 4" placeholder=" " ng-model="vm.produit.aisle">
+                    <label>{{ vm.produit.location[0].aisle || 'Ex : A12' }} </label>
+                  </div>
+                </div>
+                <div class="col-xs-6">
+                  <div class="form-group">
+                    <input type="text" class="form-control m-r" ng-disabled="vm.data.user.role_id == 4" placeholder=" " ng-model="vm.produit.palette">
+                    <label>{{ vm.produit.location[0].palette || 'Ex : PAL9' }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" ng-if="vm.data.user.role_id != 4">
+            <div class="col-md-4">
+              <div class="panel-group panel-group-joined" id="accordion-zonage" ng-if="vm.produit.location.length>0">
+                <div class="panel panel-primary">
+                  <div class="panel-heading pointer" data-toggle="collapse" data-parent="#accordion-zonage" href="#collapseOne">
+                    <h4 class="panel-title">
+                    <span class="collapsed">
+                      Historique zonage
+                    </span>
+                    </h4>
+                  </div>
+                  <div id="collapseOne" class="panel-collapse collapse">
+                    <div class="panel-body no-padder">
+                      <table class="table m-n table-striped">
+                        <thead>
+                          <tr>
+                            <th>Ancien zonage</th>
+                            <th>Nom profile</th>
+                            <th>Date</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="(key, value) in vm.produit.location track by $index">
+                            <td>{{ value.zonage }}</td>
+                            <td>{{ value.name }}</td>
+                            <td>{{ value.date }}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+            </div>
+          </div>
+          <div class="text-right">
+            <button type="reset" class="btn btn-danger closeModal" ng-click="vm.goToProductList()">Annuler</button>
+            <button type="submit" class="btn btn-info" ng-if="vm.data.user.role_id != 4 && vm.data.user.role_id != 5">Enregistrer</button>
+          </div>
+        </form>
+      </div>
+      <div class="tab-pane" id="images">
+        <div class="row">
+          <div class="col-md-2" ng-if="vm.data.user.role_id != 4 && vm.data.user.role_id != 5">
+            <input type="file" name="picture" multiple="" class="hidden">
+            <div class="add-photo-box">
+              <img src="http://myaco.lemans.org/GED/content/4805C9CE-ECF4-4232-AEF4-3580948695DC.jpg" class="img" width="115" alt="">
+              <label for="">Ajouter une photo</label>
+            </div>
+          </div>
+          
+          <div class="col-md-2 text-center" ng-repeat="(key, value) in vm.produit.pictures">
+            <div class="backdrop-img" ng-show="zoom" ng-click="zoom=0">
+              <div class="close"><i class="fa fa-times"></i></div>
+            </div>
+            <img ng-src="http://api.utiledev.vanam.fr/{{zoom?value.original_url_picture:value.url_picture}}" class="img" alt="" ng-class="{'zoom':zoom}" ng-click="zoom=!zoom">
+            <div class="m-t-xs" ng-if="vm.data.user.role_id != 4 && vm.data.user.role_id != 5">
+              <div class="btn btn-danger btn-xs" ng-click="vm.deletePhoto(value.id)"><i class="fa fa-trash"></i></div>
+              <div class="btn btn-success disabled m-l-xs btn-xs" ng-if="value.is_default=='1'"><i class="fa fa-check"></i></div>
+              <button class="btn btn-inverse m-l-xs btn-xs" ng-click="!value.disable && vm.setDefault(value.id); value.disable=1" ng-if="value.is_default=='0'"><i class="fa fa-check"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <a class="btn btn-danger closeModal" ng-click="vm.goToProductList()">Fermer</a>
+        </div>
+      </div>
+      <div class="tab-pane " id="stock">
+        <div class="stock-box" ng-repeat="(key, value) in vm.produit.stock track by $index">
+          <div class="pointure">{{ value.name }}</div>
+          <div class="reel">
+            <span class="text-center w-full" style="height: 37px; display: block;">{{ value.qtr }}</span>
+          </div>
+          <div class="aterme">
+            <span class="text-center w-full" style="height: 37px; display: block;">{{ value.qtt }}</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="stock-box somme">
+            <div class="reel">
+              <b>Stock réel</b> {{ vm.produit.qtr || '0' }}
+            </div>
+            <div class="aterme">
+              <b>Stock à terme</b> {{ vm.produit.qtt || '0' }}
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <a class="btn btn-danger closeModal" ng-click="vm.goToProductList()">Fermer</a>
+        </div>
+      </div>
+      <div class="tab-pane" id="stats">
+        <div class="row text-center">
+          <div class="col-md-4">
+            <div class="card-box widget-box-one">
+              <div class="wigdet-one-content">
+                <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Prix moyen de vente</p>
+                <h2 class="text-danger"><span>{{ vm.moy_commands | currency }} </span></h2>
+                <p class="text-muted m-0">Commande en cours</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card-box widget-box-one">
+              <div class="wigdet-one-content">
+                <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Prix moyen de vente</p>
+                <h2 class="text-dark"><span>{{ vm.moy_invoices | currency }}</span> </h2>
+                <p class="text-muted m-0">Factures</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card-box widget-box-one">
+              <div class="wigdet-one-content">
+                <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Prix moyen de vente</p>
+                <h2 class="text-primary"><span>{{ vm.moy_quotations | currency }}</span> </h2>
+                <p class="text-muted m-0">Devis</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- <div class="col-md-3">
+            <div class="card-box widget-box-one">
+              <div class="wigdet-one-content">
+                <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Prix moyen de vente</p>
+                <h2 class="text-warning"><span>{{ (vm.moy_commands + vm.moy_invoices) | currency }}</span> </h2>
+                <p class="text-muted m-0">Total</p>
+              </div>
+            </div>
+          </div> -->
+        </div>
+        <div class="panel-group panel-group-joined" id="accordion-listing">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion-listing" href="#devis">
+                Devis
+              </a>
+              </h4>
+            </div>
+            <div id="devis" class="panel-collapse collapse  in">
+              <div class="panel-body">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Date</th>
+                      <th>Société</th>
+                      <th>Qte</th>
+                      <th>Prix UHT</th>
+                      <th>Total</th>
+                      <th width="80">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="(key, value) in vm.stats.quotations track by $index">
+                      <td>{{value.id}}</td>
+                      <td>{{value.creation_date}}</td>
+                      <td>{{value.company_name}}</td>
+                      <td>{{value.qte_total  }}</td>
+                      <td>{{value.sale_price }}</td>
+                      <td>{{value.total  | currency}}</td>
+                      <td class="text-center">
+                        <a data-dismiss="modal" ui-sref="app.devis.details({id : value.id})" class="btn btn-xs btn-info closeModal"><i class="fa fa-eye"></i></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion-listing" href="#commandes"  class="collapsed">
+                Commandes
+              </a>
+              </h4>
+            </div>
+            <div id="commandes" class="panel-collapse collapse">
+              <div class="panel-body">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Date</th>
+                      <th>Société</th>
+                      <th>Qte</th>
+                      <th>Prix UHT</th>
+                      <th>Total</th>
+                      <th width="80">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="(key, value) in vm.stats.commands track by $index">
+                      <td>{{value.id}}</td>
+                      <td>{{value.creation_date}}</td>
+                      <td>{{value.company_name}}</td>
+                      <td>{{value.qte_total  }}</td>
+                      <td>{{value.sale_price }}</td>
+                      <td>{{value.total  | currency}}</td>
+                      <td class="text-center">
+                        <a data-dismiss="modal" ui-sref="app.commande.details({id : value.id})" class="btn btn-xs btn-info closeModal"><i class="fa fa-eye"></i></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion-listing" href="#factures"  class="collapsed">
+                Factures
+              </a>
+              </h4>
+            </div>
+            <div id="factures" class="panel-collapse collapse">
+              <div class="panel-body">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>N°</th>
+                      <th>Date</th>
+                      <th>Société</th>
+                      <th>Qte</th>
+                      <th>Prix UHT</th>
+                      <th>Total</th>
+                      <th width="80">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="(key, value) in vm.stats.invoices track by $index">
+                      <td>{{value.id}}</td>
+                      <td>{{value.creation_date}}</td>
+                      <td>{{value.company_name}}</td>
+                      <td>{{value.qte_total  }}</td>
+                      <td>{{value.sale_price }}</td>
+                      <td>{{value.total  | currency}}</td>
+                      <td class="text-center">
+                        <a data-dismiss="modal" ui-sref="app.facture.details({id : value.id})" class="btn btn-xs btn-info closeModal"><i class="fa fa-eye"></i></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="text-right">
+          <a class="btn btn-danger closeModal" ng-click="vm.goToProductList()">Fermer</a>
+        </div>
+      </div>
+      <div class="tab-pane" id="web">
+        <div class="text-right">
+          <a class="btn btn-danger closeModal" ng-click="vm.goToProductList()">Fermer</a>
+        </div>
+      </div>
+    </div>
+  </div>

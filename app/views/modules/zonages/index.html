@@ -1,0 +1,57 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Zonage</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="card-box no-padder" style="width: 380px">
+  <form class="row wrapper-sm" ng-submit="vm.addZonage();">
+    <div class="col-md-6">
+      <div class="form-group m-n">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.zonage.city" required="">
+        <label>Ville</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group m-n">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.zonage.trigram" required="">
+        <label>Trigramme</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-success">Ajouter</button>
+    </div>
+  </form>
+</div>
+<div class="card-box table-responsive">
+  <table id="zonages" class="table table-striped" ng-init="vm.getZonages()">
+    <thead>
+      <tr>
+        <th>Ville</th>
+        <th>Trigramme</th>
+        <th width="60">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="(key, value) in vm.zonages track by $index">
+         
+        <td>
+          <span ng-hide="edit">{{ value.city }}</span>
+          <input ng-show="edit" type="text" ng-model="value.city" ng-keydown="$event.keyCode === 13 && vm.updateZonage(value)" class="form-control">
+        </td>
+        <td>
+          <span ng-hide="edit">{{ value.trigram }}</span>
+          <input ng-show="edit" type="text" ng-model="value.trigram" ng-keydown="$event.keyCode === 13 && vm.updateZonage(value)" class="form-control">
+        </td>
+        <td>
+          <div class="btn btn-xs btn-info" ng-hide="edit" ng-click="edit=true"><i class="fa fa-pencil"></i></div>
+          <div class="btn btn-xs btn-success" ng-click="vm.updateZonage(value); edit=false;" ng-show="edit" ng-click="edit=false"><i class="fa fa-check"></i></div>
+          <div class="btn btn-xs btn-danger" ng-click="vm.deleteZonage(value.id)"><i class="fa fa-trash"></i></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

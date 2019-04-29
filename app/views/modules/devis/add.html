@@ -1,0 +1,253 @@
+<div class="row" ng-init="vm.getMarques(); vm.quotation={}; vm.quotation.quotation_details = []">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Nouveau Devis</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card-box no-padder">
+  <form class="wrapper-sm"  ng-init="vm.getClients(''); app.data.user.role_id==4?vm.affectCompany(app.data.user):null">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group m-n">
+          <angucomplete-alt
+                ng-if="app.data.user.role_id!=4" 
+                placeholder="Choisir un client..."
+                pause="100"
+                selected-object="vm.quotation.client"
+                local-data="vm.clients"
+                search-fields="company_name"
+                title-field="company_name"
+                match-class="highlight"
+                minlength="3"
+                disable-input="app.data.user.role_id==4"
+                text-no-results="Aucun client"
+                template-url="client-template.html"
+                input-class="form-control w-full"/>
+        </div>
+
+        <div ng-if="app.data.user.role_id==4">
+          <h4 ng-init="vm.quotation.client_id = app.data.user.client_infos.id ">{{ app.data.user.client_infos.company_name }} <br>{{ app.data.user.name }}   </h4>
+          <h5 ng-if="app.data.user.client_infos.contact_mobile_line">Mobile : {{ app.data.user.client_infos.contact_mobile_line }} </h5>
+          <h5 ng-if="app.data.user.client_infos.contact_tel_line">Tél : {{ app.data.user.client_infos.contact_tel_line }} </h5>
+          <h5 ng-if="app.data.user.client_infos.contact_email">{{ app.data.user.client_infos.contact_email }} </h5>
+          <h5>{{ app.data.user.client_infos.address }} </h5>
+        </div>
+
+
+        <h4>{{ vm.quotation.client.originalObject.company_name }}  </h4>
+        <h5 ng-if="vm.quotation.originalObject.client.contact_tel_line">Tél : {{ vm.quotation.originalObject.client.contact_tel_line }} </h5>
+        <h5 ng-if="vm.quotation.client.originalObject.contact_email">{{ vm.quotation.client.originalObject.contact_email }} </h5>
+        <h5>{{ vm.quotation.client.originalObject.address }} </h5>
+        <h6>{{ vm.quotation.client.originalObject.city }} {{ vm.quotation.client.originalObject.postal_code }} </h6>
+      </div>
+      <div class="col-md-6" ng-init="vm.getProduits()">
+        <div class="form-group m-n" >
+          <input type="text" readonly="" placeholder="Chargement des produits..." class="form-control w-full" ng-if="!vm.produits">
+          <angucomplete-alt 
+                ng-if="vm.produits"
+                placeholder="Choisir un article..."
+                pause="100"
+                selected-object="vm.selectedProduct"
+                local-data="vm.produits"
+                search-fields="reference"
+                title-field="reference"
+                match-class="highlight"
+                minlength="3"
+                clear-selected="true"
+                text-no-results="Aucun produit"
+                template-url="produit-template.html"
+                input-class="form-control w-full input-search-produit"/>
+        </div>
+        <div class="form-group b b-light wrapper-xs m-t-xs">
+          <h3 class="text-2x">Total
+            <div class="pull-right">{{ vm.total| currency }}</div>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script type="text/ng-template" id="produit-template.html">
+  <div class="angucomplete-holder" ng-class="{'angucomplete-dropdown-visible': showDropdown}">
+    <input ng-model="searchStr"
+      ng-disabled="disableInput"
+      type="text"
+      placeholder="{{placeholder}}"
+      ng-focus="onFocusHandler()"
+      class="{{inputClass}}"
+      ng-focus="resetHideResults()"
+      ng-blur="hideResults($event)"
+      autocapitalize="off"
+      autocorrect="off"
+      autocomplete="off"
+      ng-change="vm.inputChangeHandler(searchStr)"/>
+
+    <div class="angucomplete-dropdown" ng-show="showDropdown">
+      <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>
+      <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>
+      <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{'angucomplete-selected-row': $index == currentIndex}">
+        <div ng-if="imageField" class="angucomplete-image-holder">
+        </div>
+        <div class="angucomplete-title" ng-if="matchClass">
+          <div class="row">
+            <div class="col-md-2" ng-if="result.originalObject.url_picture">
+              <img class="img-responsive" ng-src="http://api.utiledev.vanam.fr/{{result.originalObject.url_picture}}" height="70" >
+            </div>
+            <div class="col-md-10">
+              <h4 ng-bind-html="result.title"></h4>
+              <p>{{result.originalObject.description}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="angucomplete-title" ng-if="!matchClass">
+          {{ result.title }}
+        </div>
+        <div ng-if="matchClass && result.description && result.description != ''" class="angucomplete-description" ng-bind-html="result.description"></div>
+        <div ng-if="!matchClass && result.description && result.description != ''" class="angucomplete-description">{{result.description}}</div>
+      </div>
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="client-template.html">
+  <div class="angucomplete-holder" ng-class="{'angucomplete-dropdown-visible': showDropdown}">
+    <input ng-model="searchStr"
+      ng-disabled="disableInput"
+      type="text"
+      placeholder="{{placeholder}}"
+      ng-focus="onFocusHandler()"
+      class="{{inputClass}}"
+      ng-focus="resetHideResults()"
+      ng-blur="hideResults($event)"
+      autocapitalize="off"
+      autocorrect="off"
+      autocomplete="off"
+      ng-change="vm.inputChangeHandler(searchStr)"/>
+
+    <div class="angucomplete-dropdown" ng-show="showDropdown">
+      <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>
+      <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>
+      <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{'angucomplete-selected-row': $index == currentIndex}">
+        <div ng-if="imageField" class="angucomplete-image-holder">
+        </div>
+        <div class="angucomplete-title" ng-if="matchClass">
+          <div class="row">
+            <div class="col-md-2" ng-if="result.originalObject.url_picture">
+              <img class="img-responsive" ng-src="http://api.utiledev.vanam.fr/{{result.originalObject.url_picture}}" height="70" >
+            </div>
+            <div class="col-md-10">
+              <h4 ng-bind-html="result.title"></h4>
+              <p>{{result.originalObject.description}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div>
+        <div ng-if="matchClass && result.description && result.description != ''" class="angucomplete-description" ng-bind-html="result.description"></div>
+        <div ng-if="!matchClass && result.description && result.description != ''" class="angucomplete-description">{{result.description}}</div>
+      </div>
+      
+    </div>
+  </div>
+</script>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card-box table-responsive">
+      <h3>Liste des produits</h3>
+      <table id="mouvement_entree" class="table table-striped">
+        <thead>
+          <tr>
+            <th width="120">Référence </th>
+            <th>Désignation </th>
+            <th width="100">Categorie</th>
+            <th width="100">Marque</th>
+            <th width="130">Qte</th>
+            <th width="100">Prix Unit HT</th>
+            <th width="80">Prix total</th>
+            <th width="50">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, value) in vm.quotation.quotation_details track by $index" title="rate price : {{value.sale_rate_public}}  vanam price : {{value.sale_vanam_price}}">
+            <td>{{value.reference}}</td>
+            <td>{{value.description}}</td>
+            <td>{{value.category}}</td>
+            <td>{{value.brand}}</td>
+            <td><input type="number" min="0" max="{{value.qtt}}" ng-model="value.qte" ng-blur="vm.lissage(value.id, value.qte, 0)" ng-keydown="$event.keyCode === 13 && vm.lissage(value.id, value.qte)" class="w-xxs">/{{value.qtt}}</td>
+            <td><input type="number" ng-disabled="app.data.user.role_id==4" ng-model="value.sale_price" ng-keyup="vm.calculTotal()" class="w-xxs" placeholder="Prix U/ht"></td>
+            <td><input type="text" disabled="" value="{{ (value.sale_price * vm.calculerStock(value.stock)) | number }}" class="w-xxs" placeholder="Prix total"></td>
+            <td>
+              <div class="btn btn-xs btn-info" ng-click="vm.openDetailsProduit(value.product_id)" ><i class="fa fa-info"></i></div>
+              <div class="btn btn-xs btn-danger" ng-click="vm.removeProduct( $index )" ><i class="fa fa-trash"></i></div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">
+              <textarea class="form-control" ng-model="vm.quotation.comment" ng-init="vm.quotation.comment=''" placeholder="Commentaire"></textarea>
+            </td>
+            <td colspan="2" align="right">
+              <div ng-click="vm.fermer()" class="btn btn-sm btn-danger">Fermer</div>
+              <div class="btn btn-sm btn-success" ng-click="vm.addQuotation()">Enregistrer</div>
+            </td>
+            <td colspan="3">
+              <div class="row">
+                <div class="col-md-4">Personne</div>
+                <div class="col-md-8">{{app.data.user.firstname }} {{app.data.user.name }}</div>
+                <div class="col-md-4">Monnaie {{ vm.id_euro }}</div>
+                <div class="col-md-8">
+                  <select class="form-control" ng-model="vm.quotation.change_id" required="" ng-init="vm.getDevises(); vm.quotation.change_id = vm.id_euro">
+                    <option value="{{ value.id }}" ng-repeat="(key, value) in vm.devises track by $index">{{ value.name }} </option>
+                  </select>
+                </div>  
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="lissage" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Lissage</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div data-ng-include=" 'modules/devis/lissage.html' "></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="ajoutStock" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Stock</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div data-ng-include=" 'modules/devis/stock.html' "></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/ng-template" id="detailsProduit.html">
+  <div class="detailsProduitModal" data-ng-include=" 'modules/produits/details.html' "></div>
+</script>

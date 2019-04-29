@@ -1,0 +1,103 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Gamme</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card-box w-xxl no-padder">
+  <form class="row wrapper-sm" ng-submit="vm.addGamme();">
+    <div class="col-md-9">
+      <div class="form-group m-n">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.gamme.name" required="">
+        <label>Gamme</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-success">Ajouter</button>
+    </div>
+  </form>
+</div>
+<div class="card-box table-responsive">
+  <table id="gammes" class="table table-striped" ng-init="vm.getGammes()">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th width="100">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="(key, value) in vm.gammes track by $index">
+        <td>
+          <span ng-hide="edit">{{ value.name }}</span>
+          <input ng-show="edit" type="text" ng-model="value.name" ng-keydown="$event.keyCode === 13 && vm.updateGamme(value)" class="form-control">
+        </td>
+        <td>
+          <div class="btn btn-xs btn-info" ng-hide="edit" ng-click="edit=true"><i class="fa fa-pencil"></i></div>
+          <div class="btn btn-xs btn-success" ng-click="vm.updateGamme(value); edit=false;" ng-show="edit" ng-click="edit=false"><i class="fa fa-check"></i></div>
+          <div class="btn btn-xs btn-success" ng-click="vm.getDetails(value);" data-toggle="modal"   data-target="#detailGamme"><i class="fa fa-eye"></i></div>
+          <div class="btn btn-xs btn-danger" ng-click="vm.deleteGamme(value.id)"><i class="fa fa-trash"></i></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="modal fade" id="detailGamme" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Détails gamme</h3>
+        </div>
+        <div class="panel-body">
+
+          <div class="card-box w-xxl no-padder">
+            <form class="row wrapper-sm" ng-submit="vm.addDetailsGamme();">
+              <div class="col-md-9">
+                <div class="form-group m-n">
+                  <input type="text" class="form-control" placeholder="Gamme" ng-model="vm.details_gamme_name" required="">
+                </div>
+              </div>
+              <div class="col-md-3">
+                <button type="submit" class="btn btn-success">Ajouter</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card-box table-responsive">
+            <table id="detailGammes" class="table table-striped">
+              <thead>
+                <tr>
+                  <th width="10"></th>
+                  <th>Nom</th>
+                  <th width="100">Actions</th>
+                </tr>
+              </thead>
+              <tbody ui-sortable="vm.sortableOptions" ng-model="vm.range_details">
+              <tr ng-repeat="(key, value) in vm.range_details | orderBy:'rang' track by $index">
+                <td>
+                  <i class="fa fa-navicon"></i>
+                </td>
+                <td>
+                  <span ng-hide="edit">{{ value.name }}</span>
+                  <input ng-show="edit" type="text" ng-model="value.name" ng-keydown="$event.keyCode === 13 && vm.updateDetailsGamme(value)" class="form-control">
+                </td>
+                <td width="100">
+                  <div class="btn btn-xs btn-info" ng-hide="edit" ng-click="edit=true"><i class="fa fa-pencil"></i></div>
+                  <div class="btn btn-xs btn-success" ng-click="vm.updateDetailsGamme(value); edit=false;" ng-show="edit" ng-click="edit=false"><i class="fa fa-check"></i></div>
+                  <div class="btn btn-xs btn-danger" ng-click="vm.deleteDetailsGamme(value.id)"><i class="fa fa-trash"></i></div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,118 @@
+<div class="sidebar-inner slimscrollleft">
+  <div id="sidebar-menu">
+    <div class="user-details">
+      <ul class="menu-companies" ng-if="app.showChangeCompany && app.companies.length > 1">
+        <li ng-repeat="(key, value) in app.companies track by $index"><a ng-click="app.showChangeCompany=false; app.changeCompany(value);">{{ value.name }}</a></li>
+      </ul>
+      <div class="overlay"></div>
+      <div class="text-center">
+        <img ng-src="http://api.utiledev.vanam.fr/{{ app.data.user.url_picture }}" ng-if="app.data.user.url_picture" alt="{{app.data.user.name }}" class="thumb-md img-circle">
+        <img ng-src="images/user.png" ng-if="app.data.user.role_id != 4 && !app.data.user.url_picture"  alt="{{app.data.user.name }}" class="thumb-md img-circle">
+        <div style="height: 30px" ng-if="app.data.user.role_id == 4"></div>
+        <div class="label label-info company-name" ng-click="app.showChangeCompany = !app.showChangeCompany">
+          {{ app.data.user.company.name }}
+        </div>
+        <div class="label-role label label-success">{{ app.getRole( app.data.user.role.role ) }}</div>
+      </div>
+      <div class="user-info">
+        <div>
+          <a href="#setting-dropdown" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> {{app.data.user.name }} <br> {{app.data.user.firstname }} <span class="mdi mdi-menu-down"></span></a>
+        </div>
+      </div>
+    </div>
+    <div class="dropdown" id="setting-dropdown">
+      <ul class="dropdown-menu">
+        <li><a ui-sref="app.profile"><i class="mdi mdi-face-profile m-r-5"></i> Profile</a></li>
+        <li><a ng-click="app.logout()"><i class="mdi mdi-logout m-r-5"></i> Logout</a></li>
+      </ul>
+    </div>
+    <ul>
+      <li class="menu-title">Navigation</li>
+      <li ng-if="app.data.user.role_id != 4 && app.data.user.role_id != 5 ">
+        <a ui-sref="app.index" ui-sref-active="active" class="waves-effect">
+          <i class="mdi mdi-view-dashboard"></i> 
+          <span> Accueil </span> 
+        </a>
+      </li>
+
+      <li class="has_sub" ng-if="app.data.user.role_id != 4 ">
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-users"></i> <span> Comptes </span> <span class="menu-arrow"></span></a>
+        <ul class="list-unstyled">
+          <li ng-if="app.data.user.role_id <= 2 ">
+            <a ui-sref="app.users.index" ui-sref-active="active" class="waves-effect"><i class="fa fa-user"></i><span> Utilisateurs </span></a>
+          </li>
+          <li ng-if="app.data.user.role_id != 4">
+            <a ui-sref="app.clients.index" ui-sref-active="active" class="waves-effect"><i class="fa fa fa-black-tie"></i> <span> Clients </span> </a>
+          </li>
+        </ul>
+      </li>
+      <li class="has_sub" ng-if="app.data.user.role_id <= 3 ">
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-cogs"></i> <span> Preférences </span> <span class="menu-arrow"></span></a>
+        <ul class="list-unstyled">
+          <li><a ui-sref="app.categories.index" class="waves-effect"><i class="fa fa-server"></i><span> Catégories </span></a></li>
+          <li>
+            <a ui-sref="app.marques.index" class="waves-effect"><i class="fa fa-ioxhost"></i> <span> Marques </span> </a>
+          </li>
+          <li>
+            <a ui-sref="app.countries.index" class="waves-effect"><i class="fa fa-globe"></i> <span> Pays </span> </a>
+          </li>
+          <li>
+            <a ui-sref="app.gammes.index" class="waves-effect"><i class="fa fa-gift"></i> <span> Gammes </span> </a>
+          </li>
+          <li>
+            <a ui-sref="app.genres.index" class="waves-effect"><i class="fa fa-qrcode"></i> <span> Genres </span> </a>
+          </li>
+          <li>
+            <a ui-sref="app.sports.index" class="waves-effect"><i class="fa fa-soccer-ball-o"></i> <span> Sports </span> </a>
+          </li>
+          <li>
+            <a ui-sref="app.zonages.index" class="waves-effect"><i class="fa fa-crosshairs"></i> <span> Zonages </span> </a>
+          </li>
+          <li>
+            <a ui-sref="app.devises.index" class="waves-effect"><i class="fa fa-money"></i> <span> Devises </span> </a>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <a ui-sref="app.produits.index" class="waves-effect"><i class="fa fa-tags"></i> <span> Produits </span> </a>
+      </li>
+
+      <li class="has_sub">
+        <a href="javascript:void(0);" class="waves-effect"><i class="fa fa-th"></i> <span> Traitements </span> <span class="menu-arrow"></span></a>
+        <ul class="list-unstyled">
+          <li ng-if="app.data.user.role_id != 4"><a ui-sref="app.traitements.mouvements.index" class="waves-effect"><i class="fa fa-sliders"></i><span> Mouvements </span></a></li>
+          <li ng-if="app.data.user.role_id != 3">
+            <a ui-sref="app.devis.index" class="waves-effect"><i class="fa fa-file-o"></i> <span> Devis </span> </a>
+          </li>
+          <li ui-sref-active="active">
+            <a ui-sref="app.commande.index" class="waves-effect"><i class="fa fa-file"></i> <span> Commandes </span> </a>
+          </li>
+          <li ui-sref-active="active">
+            <a ui-sref="app.facture.index" class="waves-effect"><i class="fa fa-file-text"></i> <span> Factures </span> </a>
+          </li>
+        </ul>
+      </li>
+
+    </ul>
+  </div>
+</div>
+<div class="bloc-responsable" ng-show="app.data.user.role_id == 4 && showContact" ng-click="showContact=!showContact">
+  <div class="head">
+    <img ng-src="images/user.png" ng-if="!app.data.user.referer_contact.url_picture" class="thumb-md img-circle m-t-xs">
+    <img ng-src="http://api.utiledev.vanam.fr/{{app.data.user.referer_contact.url_picture}}" ng-if="app.data.user.referer_contact.url_picture" class="thumb-md img-circle m-t-xs">
+  </div>
+  <div class="foot">
+    <h5>{{app.data.user.referer_contact.name }} {{app.data.user.referer_contact.firstname }}</h5>
+    <h6>{{app.data.user.referer_contact.mail }}</h6>
+    <h6>{{app.data.user.referer_contact.mobile_line }}</h6>
+  </div>
+</div>
+<div class="row m-n bg-light bloc-responsable-societe" ng-init="showContact=1" ng-show="app.data.user.role_id == 4" ng-click="showContact=!showContact">
+  <div class="col-md-3 text-right" ng-show="!showContact">
+    <img ng-src="images/user.png" ng-if="!app.data.user.referer_contact.url_picture" class="thumb-sm img-circle m-t-xs">
+    <img ng-src="http://api.utiledev.vanam.fr/{{app.data.user.referer_contact.url_picture}}" ng-if="app.data.user.referer_contact.url_picture" class="thumb-sm img-circle m-t-xs">
+  </div>
+  <div class="text-center" ng-class="{'col-md-12': showContact,'col-md-9': !showContact}">
+    <label class="padder-v text-xs">Your contact</label>
+  </div>
+</div>

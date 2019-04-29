@@ -1,0 +1,26 @@
+<div class="content">
+  <table class="table m-n table-striped">
+    <thead>
+      <tr>
+        <th width="40"></th>
+        <th width="40">Qte</th>
+        <th>Produit</th>
+        <th width="70">Total</th>
+      </tr>
+    </thead>
+    <tr class="item" ng-repeat="(key, value) in app.devis track by $index">
+      <td>
+        <div class="btn btn-danger btn-xs" ng-click="app.deleteLigneDevis( $index )"><i class="fa fa-trash"></i></div>
+      </td>
+      <td>
+        <input type="text" class="w-xxs text-center" ng-model="value.qtt">
+      </td>
+      <td>{{value.reference}}</td>
+      <td>{{(value.qtt * value.sale_vanam_price)| currency }} </td>
+    </tr>
+  </table>
+</div>
+<div class="foot text-right">
+  <div class="btn btn-xs btn-success" ng-click="app.transformerDevis()"> <i class="fa fa-check"></i> Transformation en devis</div>
+  <div class="btn btn-xs btn-danger" ng-click="app.viderDevis()"> <i class="fa fa-trash"></i> Vider le devis</div>
+</div>

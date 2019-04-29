@@ -1,0 +1,188 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Liste des Commandes</h4>
+      <div class="pull-right"  ng-if="app.data.user.role_id != 4">
+        <a class="btn btn-primary btn-sm waves-effect waves-light" ui-sref="app.commande.add" ng-click="vm.command = {}; vm.total=0">Ajouter commande</a>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card-box no-padder">
+  <form class="wrapper-sm" ng-submit="vm.getCommands(vm.filter)">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <input type="text" class="form-control" ng-model="vm.filter.num_command" placeholder=" ">
+            <label>N° Commande</label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <input type="text" class="form-control"  ng-model="vm.filter.creator" placeholder=" ">
+            <label>Créateur de commande</label>
+          </div>
+        </div>
+        <div class="col-md-4" ng-if="app.data.user.role_id != 4">
+          <div class="form-group">
+            <input type="text" class="form-control" ng-model="vm.filter.company"  placeholder=" ">
+            <label>Société</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-sm btn-success m-t-xs">Trouver</button>
+        </div>
+
+      </div>
+  </form>
+</div>
+ 
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card-box table-responsive">
+      <h6 class="text-center">{{vm.commands.length}} commande trouvée(s)</h6>
+      <table id="liste_commands" class="table table-striped" ng-init="vm.getCommands()">
+        <thead>
+          <tr>
+            <th width="70">N° Commande </th>
+            <th>N° Client </th>
+            <th>Societe</th>
+            <th width="140">Date</th>
+            <th>Utilisateur</th>
+            <th>Statut</th>
+            <th width="80">Total</th>
+            <th width="200" class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, value) in vm.commands track by $index" style="background: }}">
+            <td align="center">{{value.id}}</td>
+            <td>{{value.client_id}}</td>
+            <td>{{value.company_name}}</td>
+            <td>{{value.creation_date | moment:'DD MMMM YYYY' }}</td>
+            <td>{{value.user_name}}</td>
+            <td class="text-center"> <div class="badge badge-{{value.status}}"> {{ {'RESERVED': 'Réservé','TO_PREPARE': 'À préparer','PREPARED': 'Prêt','READY_TO_SENT': 'Prêt expédiable','READY_NOT_TO_SENT' : 'Prêt non expédiable','SENT': 'Expédié'}[value.status]}}</div></td>
+            <td>{{value.total | currency }}</td>
+            <td class="text-right">
+              <a ui-sref="app.commande.details({id: value.id})" class="btn btn-xs btn-info"><i class="fa fa-pencil"></i></a>
+              <div data-toggle="modal" data-target="#exports" ng-click="vm.print_id = value.id; vm.search.render_type=1" class="btn btn-xs btn-default"><i class="fa fa-print"></i></div>
+              <div data-toggle="modal" data-target="#exports" ng-click="vm.print_id = value.id; vm.search.render_type=2" class="btn btn-xs btn-default"><i class="fa fa-file-excel-o"></i></div>
+              <div ng-if="app.data.user.role_id != 4" class="btn btn-xs btn-primary" title="Bon de préparation" ng-click="vm.bonPreparation(value.id)"><i class="fa fa-list"></i></div>
+              <div ng-if="app.data.user.role_id != 4" data-toggle="modal" data-target="#proforma" ng-click="vm.proforma.command_id = value.id;" class="btn btn-xs btn-default" title="Proforma"><i class="fa fa-file-o"></i></div>
+              <div ng-if="app.data.user.role_id != 4" class="btn btn-xs btn-default" title="Facturer" ng-click="vm.facturer(value.id)"><i class="fa fa-file"></i></div>
+              <div ng-if="app.data.user.role_id != 4" class="btn btn-xs btn-danger" ng-click="vm.deleteCommand( value.id )"><i class="fa fa-trash"></i></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="ajoutStock" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Ajout stock</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div data-ng-include=" 'modules/mouvements/stock.html' "></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exports" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Export</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div class="m-b m-l-lg m-r-lg">
+            <div class="checkbox" ng-if="vm.search.render_type == 1" ng-init="vm.search.header=1">
+              <input id="checkbox1" ng-model="vm.search.header" ng-true-value="1" ng-false-value="0" checked="" type="checkbox">
+              <label for="checkbox1">Entete</label>
+            </div> 
+            <div class="checkbox" ng-init="vm.search.is_images=1">
+              <input id="checkbox1" ng-model="vm.search.is_images" ng-true-value="1" ng-false-value="0" checked="" type="checkbox">
+              <label for="checkbox1">Images</label>
+            </div> 
+            <div class="checkbox" ng-init="vm.search.vanam_price=1">
+              <input id="checkbox5" ng-model="vm.search.vanam_price" type="checkbox" ng-true-value="1" ng-false-value="0">
+              <label for="checkbox5">Prix vente Vanam</label>
+            </div>
+            <label style="margin-left: -20px;" ng-init="vm.search.format_stock='1'">
+              Type d’affichage des tailles
+            </label>
+            <div class="radio">
+              <input id="radio1" name="tailles" type="radio" ng-model="vm.search.format_stock" value="1">
+              <label for="radio1" style="padding-left: 21px; font-weight: bold;">Tailles dans X colonnes</label>
+            </div>
+            <div class="radio">
+              <input id="radio2" name="tailles" type="radio" ng-model="vm.search.format_stock" value="2">
+              <label for="radio2" style="padding-left: 21px; font-weight: bold;">Tailles dans une colonnes</label>
+            </div>  
+            <!-- <div class="text-center m-b-md" ng-init="vm.search.render_type=1">
+              <button type="button" ng-disabled="vm.search.render_type==1" ng-class="{'btn-success': vm.search.render_type==1}" ng-click="vm.search.render_type=1" class="btn btn-default waves-effect m-r"><i class="fa fa-file-pdf-o"></i> PDF</button>
+              <button type="button" ng-disabled="vm.search.render_type==2" ng-class="{'btn-success': vm.search.render_type==2}" ng-click="vm.search.render_type=2" class="btn btn-default waves-effect"><i class="fa fa-file-excel-o"></i> EXCEL</button>
+            </div> -->
+            <div class="text-center">
+              <div class="btn btn-sm btn-success" ng-click="vm.imprimer(vm.search)"> Générer </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="proforma" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Proforma</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div class="m-b m-l-lg m-r-lg">
+            <div class="m-b m-t">
+              <label>Type de paiement</label>
+              <select class="form-control" ng-model="vm.proforma.type_payment">
+                <option class="hidden">Type de paiement</option>
+                <option value="1">Chèque</option>
+                <option value="2">Virement</option>
+                <option value="3">Carte Bleue</option>
+                <option value="4">Espèce</option>
+                <option value="5">Traite</option>
+              </select>
+            </div> 
+            <div class="text-center m-b-md" ng-init="vm.proforma.type_print=1">
+              <button type="button" ng-disabled="vm.proforma.type_print==1" ng-class="{'btn-success': vm.proforma.type_print==1}" ng-click="vm.proforma.type_print=1" class="btn btn-default waves-effect m-r"><i class="fa fa-file-pdf-o"></i> PDF</button>
+              <button type="button" ng-disabled="vm.proforma.type_print==2" ng-class="{'btn-success': vm.proforma.type_print==2}" ng-click="vm.proforma.type_print=2" class="btn btn-default waves-effect"><i class="fa fa-file-excel-o"></i> EXCEL</button>
+            </div> 
+            <div class="text-center">
+              <div class="btn btn-sm btn-danger" data-dismiss="modal"> Annuler </div>
+              <div class="btn btn-sm btn-success" data-dismiss="modal" ng-click="vm.getProforma(vm.proforma.command_id)" > Générer </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/ng-template" id="addProduct.html">
+  <div class="addProductModal" data-ng-include=" 'modules/produits/add.html' "></div>
+</script>

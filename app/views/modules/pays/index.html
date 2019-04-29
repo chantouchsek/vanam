@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Pays</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="card-box w-xxl no-padder">
+  <form class="row wrapper-sm" ng-submit="vm.addCountry();">
+    <div class="col-md-9">
+      <div class="form-group m-n">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.country.name" required="">
+        <label>Pays</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-success">Ajouter</button>
+    </div>
+  </form>
+</div>
+<div class="card-box table-responsive">
+  <table id="pays" class="table table-striped" ng-init="vm.getCountries()">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th width="60">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="(key, value) in vm.countries | orderBy:'id'">
+        
+        <td>
+          <span ng-hide="edit">{{ value.name }}</span>
+          <input ng-show="edit" type="text" ng-keydown="$event.keyCode === 13 && vm.updateCountry(value)" ng-model="value.name" class="form-control">
+        </td>
+        <td>
+          <div class="btn btn-xs btn-info" ng-hide="edit" ng-click="edit=true"><i class="fa fa-pencil"></i></div>
+          <div class="btn btn-xs btn-success" ng-click="vm.updateCountry(value); edit=false;" ng-show="edit" ng-click="edit=false"><i class="fa fa-check"></i></div>
+          <div class="btn btn-xs btn-danger" ng-click="vm.deleteCountry(value.id)"><i class="fa fa-trash"></i></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+    <input type="file" name="picture" class="form-control hidden ">
+
+</div>

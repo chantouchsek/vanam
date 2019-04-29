@@ -1,0 +1,310 @@
+<div class="row" ng-init="vm.getMarques(); vm.getQuotation()">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Détails Devis</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card-box no-padder">
+  <form class="wrapper-sm"  ng-init="vm.getClients(''); vm.isChanged=0; ">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group m-n" ng-if="app.data.user.role_id != 4">
+          <angucomplete-alt 
+                placeholder="Choisir un client..."
+                pause="100"
+                selected-object="vm.quotation.client"
+                local-data="vm.clients"
+                search-fields="company_name"
+                title-field="company_name"
+                match-class="highlight"
+                minlength="3"
+                text-no-results="Aucun client"
+                template-url="custom-template.html"
+                input-class="form-control w-full"/>
+        </div>
+        <h4>{{ vm.quotation.client.company_name || vm.quotation.client.description.company_name }}  </h4>
+        <h5>Tél : {{ vm.quotation.client.contact_tel_line || vm.quotation.client.description.contact_tel_line }} </h5>
+        <h5>{{ vm.quotation.client.contact_email || vm.quotation.client.description.contact_email }} </h5>
+        <h5>{{ vm.quotation.client.address }} </h5>
+        <h6>{{ vm.quotation.client.city }} {{ vm.quotation.client.postal_code }} </h6>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group m-n" ng-init="vm.getProduits()">
+          <input type="text" readonly="" placeholder="Chargement des produits..." class="form-control w-full" ng-if="!vm.produits">
+          <angucomplete-alt 
+                placeholder="Choisir un article..."
+                pause="100"
+                selected-object="vm.selectedProduct"
+                local-data="vm.produits"
+                search-fields="reference"
+                title-field="reference"
+                match-class="highlight"
+                minlength="3"
+                text-no-results="Aucun produit"
+                template-url="custom-template-produit.html"
+                input-class="form-control w-full"/>
+        </div>
+        <div class="form-group b b-light wrapper-xs m-t-xs">
+          <h3 class="text-2x">Total
+            <div class="pull-right">{{ vm.total | currency }}</div>
+          </h3>
+        </div>
+        <a ng-if="vm.quotation.command" ui-sref="app.commande.details({id: vm.quotation.command.id })" class="badge badge-success"> <i class="fa fa-link"></i> Commande liée </a>
+        <div class="badge badge-warning" ng-if="!vm.quotation.command">Aucune commande liée </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script type="text/ng-template" id="custom-template-produit.html">
+  <div class="angucomplete-holder" ng-class="{'angucomplete-dropdown-visible': showDropdown}">
+    <input ng-model="searchStr"
+      ng-disabled="disableInput"
+      type="text"
+      placeholder="{{placeholder}}"
+      ng-focus="onFocusHandler()"
+      class="{{inputClass}}"
+      ng-focus="resetHideResults()"
+      ng-blur="hideResults($event)"
+      autocapitalize="off"
+      autocorrect="off"
+      autocomplete="off"
+      ng-change="vm.inputChangeHandler(searchStr)"/>
+
+    <div class="angucomplete-dropdown" ng-show="showDropdown">
+      <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>
+      <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>
+      <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{'angucomplete-selected-row': $index == currentIndex}">
+        <div ng-if="imageField" class="angucomplete-image-holder">
+        </div>
+        <div class="angucomplete-title" ng-if="matchClass">
+          <div class="row">
+            <div class="col-md-2" ng-if="result.originalObject.url_picture">
+              <img ng-src="http://api.utiledev.vanam.fr/{{result.originalObject.url_picture}}" class="img-responsive" height="70" >
+            </div>
+            <div class="col-md-10">
+              <h4 ng-bind-html="result.title"></h4>
+              <p>{{result.originalObject.description}}</p>
+            </div>
+             
+          </div>
+        </div>
+        <div class="angucomplete-title" ng-if="!matchClass">
+          {{ result.title }}
+        </div>
+        <div ng-if="matchClass && result.description && result.description != ''" class="angucomplete-description" ng-bind-html="result.description"></div>
+        <div ng-if="!matchClass && result.description && result.description != ''" class="angucomplete-description">{{result.description}}</div>
+      </div>
+      
+    </div>
+  </div>
+</script>
+
+<script type="text/ng-template" id="custom-template.html">
+  <div class="angucomplete-holder" ng-class="{'angucomplete-dropdown-visible': showDropdown}">
+    <input ng-model="searchStr"
+      ng-disabled="disableInput"
+      type="text"
+      placeholder="{{placeholder}}"
+      ng-focus="onFocusHandler()"
+      class="{{inputClass}}"
+      ng-focus="resetHideResults()"
+      ng-blur="hideResults($event)"
+      autocapitalize="off"
+      autocorrect="off"
+      autocomplete="off"
+      ng-change="vm.inputChangeHandler(searchStr)"/>
+
+    <div class="angucomplete-dropdown" ng-show="showDropdown">
+      <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>
+      <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>
+      <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{'angucomplete-selected-row': $index == currentIndex}">
+        <div ng-if="imageField" class="angucomplete-image-holder">
+        </div>
+        <div class="angucomplete-title" ng-if="matchClass">
+          <div class="row">
+            <div class="col-md-2" ng-if="result.originalObject.url_picture">
+              <img ng-src="http://api.utiledev.vanam.fr/{{result.originalObject.url_picture}}" height="70" >
+            </div>
+            <div class="col-md-10">
+              <h4 ng-bind-html="result.title"></h4>
+              <p>{{result.originalObject.description}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div>
+        <div ng-if="matchClass && result.description && result.description != ''" class="angucomplete-description" ng-bind-html="result.description"></div>
+        <div ng-if="!matchClass && result.description && result.description != ''" class="angucomplete-description">{{result.description}}</div>
+      </div>
+      
+    </div>
+  </div>
+</script>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card-box table-responsive">
+      <h3>Liste des produits</h3>
+      <table id="mouvement_entree" class="table table-striped">
+        <thead>
+          <tr>
+            <th width="120">Référence </th>
+            <th>Désignation </th>
+            <th width="100">Marque</th>
+            <th width="130">Qte</th>
+            <th width="100">Prix Unit HT</th>
+            <th width="120">Prix total</th>
+            <th width="50">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, value) in vm.quotation.quotation_details track by $index" ng-mousedown="vm.showPrice = 1" ng-mouseup="vm.showPrice = 0">
+            <td>{{value.reference}}</td>
+            <td>
+              <div>
+                {{value.description}}
+                <div class="tooltip">
+                  Designation : {{value.description}}<br>
+                  ref  :  {{value.reference}}<br>
+                  vanam:  {{value.sale_vanam_price}}<br>
+                  tarif:  {{value.sale_price}}<br>
+                  <span ng-if="vm.showPrice && app.data.user.role_id!=4">
+                    {{value.purchase_vanam_price | number:2}}
+                  </span>
+                </div>
+              </div>
+            </td>
+            <td>{{value.brand}}</td>
+            <td><input type="text" ng-model="value.qte" ng-blur="vm.lissage(value.product_id, value.qte, 0)" ng-keydown="$event.keyCode === 13 && vm.lissage(value.product_id, value.qte)" class="w-xxs text-center">/{{value.qtt}}</td>
+            <td><input type="text" ng-disabled="app.data.user.role_id==4" ng-model="value.sale_price" ng-keyup="vm.calculTotal()" class="w-xxs text-center" placeholder="Prix U/ht"></td>
+            <td><input type="text" disabled="" value="{{ (value.sale_price * vm.calculerStock(value.stock)) | currency }}" class="w-xs  text-center" placeholder="Prix total"></td>
+            <td>
+              <div class="btn btn-xs btn-info" ng-click="vm.openDetailsProduit(value.product_id)" ><i class="fa fa-info"></i></div>
+              <div class="btn btn-xs btn-danger" ng-click="vm.removeProduct( $index , 1, value.product_id)" ><i class="fa fa-trash"></i></div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">
+              <div class="row">
+                <div class="col-md-5">              
+                  <textarea class="form-control" ng-model="vm.quotation.comment" placeholder="Commentaire"></textarea>
+                </div>
+                <div class="col-md-7">
+                  <div class="btn btn-xs btn-default" data-toggle="modal" data-target="#exports" ng-click="vm.search.render_type=1">Imprimer</div>
+                  <a   class="btn btn-xs btn-default" ng-click="vm.dupliquer(vm.quotation.id)">Dupliquer</a>
+                  <a   class="btn btn-xs btn-danger"  ng-click="vm.fermer()">Fermer</a>
+                  <div class="btn btn-xs btn-success" ng-disabled="vm.quotation.command" ng-click="!vm.quotation.command && vm.transformer(vm.quotation.id)">Transformer</div>
+                  <div class="btn btn-xs btn-success" ng-click="vm.updateQuotation()">Enregistrer</div>
+                </div>
+              </div>
+            </td>
+            <td colspan="3">
+              <div class="row">
+                <div class="col-md-4">Personne</div>
+                <div class="col-md-8">{{ vm.quotation.user_name }}</div>
+                <div class="col-md-4">Monnaie</div>
+                <div class="col-md-8">
+                  <select class="form-control" ng-model="vm.quotation.change_id" required="" ng-init="vm.getDevises(); vm.quotation.change_id = '1'">
+                    <option value="{{ value.id }}" ng-repeat="(key, value) in vm.devises track by $index">{{ value.name }} </option>
+                  </select>
+                </div>
+              </div>
+            </td>
+          </tr>
+          
+           
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exports" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Export</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div class="m-b m-l-lg m-r-lg">
+            <div class="checkbox" ng-if="vm.search.render_type == 1" ng-init="vm.search.header=1">
+              <input id="checkbox1" ng-model="vm.search.header" ng-true-value="1" ng-false-value="0" checked="" type="checkbox">
+              <label for="checkbox1">Entete</label>
+            </div> 
+            <div class="checkbox" ng-init="vm.search.is_images=1">
+              <input id="checkbox1" ng-model="vm.search.is_images" ng-true-value="1" ng-false-value="0" checked="" type="checkbox">
+              <label for="checkbox1">Images</label>
+            </div> 
+            <div class="checkbox" ng-init="vm.search.vanam_price=1">
+              <input id="checkbox5" ng-model="vm.search.vanam_price" type="checkbox" ng-true-value="1" ng-false-value="0">
+              <label for="checkbox5">Prix vente Vanam</label>
+            </div>
+            <label style="margin-left: -20px;" ng-init="vm.search.format_stock='1'">
+              Type d’affichage des tailles
+            </label>
+            <div class="radio">
+              <input id="radio1" name="tailles" type="radio" ng-model="vm.search.format_stock" value="1">
+              <label for="radio1" style="padding-left: 21px; font-weight: bold;">Tailles dans X colonnes</label>
+            </div>
+            <div class="radio">
+              <input id="radio2" name="tailles" type="radio" ng-model="vm.search.format_stock" value="2">
+              <label for="radio2" style="padding-left: 21px; font-weight: bold;">Tailles dans une colonnes</label>
+            </div>  
+            <div class="text-center m-b-md" ng-init="vm.search.render_type=1">
+              <button type="button" ng-disabled="vm.search.render_type==1" ng-class="{'btn-success': vm.search.render_type==1}" ng-click="vm.search.render_type=1" class="btn btn-default waves-effect m-r"><i class="fa fa-file-pdf-o"></i> PDF</button>
+              <button type="button" ng-disabled="vm.search.render_type==2" ng-class="{'btn-success': vm.search.render_type==2}" ng-click="vm.search.render_type=2" class="btn btn-default waves-effect"><i class="fa fa-file-excel-o"></i> EXCEL</button>
+            </div>
+            <div class="text-center">
+              <div class="btn btn-sm btn-success" ng-click="vm.imprimer(vm.search)"> Générer </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="lissage" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Lissage</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div data-ng-include=" 'modules/devis/lissage.html' "></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ajoutStock" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Stock</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div data-ng-include=" 'modules/devis/stock.html' "></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/ng-template" id="detailsProduit.html">
+  <div class="detailsProduitModal" data-ng-include=" 'modules/produits/details.html' "></div>
+</script>

@@ -1,0 +1,39 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Importer fichier</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="card-box">
+  <form ng-submit="vm.uploadImages()" class="row">
+    <div class="col-md-4">
+      <div class="custom-upload-file">
+        <i class="fa fa-upload"></i> {{ vm.file_name || 'Importer' }}
+        <input type="file" name="file" required="" class="form-control">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button class="btn btn-info m-t-xs" ng-show="vm.file_name">Envoyer</button>
+    </div>
+  </form>
+</div>
+<div class="card-box" ng-if="vm.report.msg">
+  <div class="alert alert-success" role="alert">
+    {{ vm.report.msg }}
+  </div>
+
+  <div class="alert alert-success" role="alert">
+    Nombre total des photos traitées : {{ vm.report.report[0].pictures_number }}
+  </div>
+
+  <!-- <div class="alert alert-success" role="alert">
+    Nombre total des produits dans le fichier : {{ vm.report.report[0].products_number }}
+  </div> -->
+
+  <div class="alert alert-success" role="alert">
+    Nombre total des produits traités avec succès : {{ vm.report.report[0].products_ok }}
+  </div>
+   
+</div>

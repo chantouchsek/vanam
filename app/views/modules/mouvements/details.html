@@ -1,0 +1,298 @@
+<div class="row" ng-init="vm.getDevises(); vm.getMouvementByID();">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Mouvement d'entrée</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card-box no-padder">
+  <form class="wrapper-sm"  ng-init="vm.getProduits()">
+      <div class="form-group m-n">
+        <angucomplete-alt 
+              placeholder="Choisir un article..."
+              pause="100"
+              selected-object="vm.selectedProduct"
+              local-data="vm.produits"
+              search-fields="reference"
+              ng-keydown="$event.keyCode === 13 && vm.openModalAddProduct()"
+              title-field="reference"
+              match-class="highlight"
+              minlength="4"
+              text-no-results="Ajouter un produit"
+              template-url="/custom-template.html"
+              input-class="form-control w-full"/>
+      </div>
+  </form>
+</div>
+
+
+<script type="text/ng-template" id="/custom-template.html">
+<div class="angucomplete-holder" ng-class="{'angucomplete-dropdown-visible': showDropdown}">
+  <input ng-model="searchStr"
+    ng-disabled="disableInput"
+    type="text"
+    placeholder="{{placeholder}}"
+    ng-focus="onFocusHandler()"
+    class="{{inputClass}}"
+    ng-focus="resetHideResults()"
+    ng-blur="hideResults($event)"
+    autocapitalize="off"
+    autocorrect="off"
+    autocomplete="off"
+    ng-change="inputChangeHandler(searchStr)"/>
+
+  <div class="angucomplete-dropdown" ng-show="showDropdown">
+    <div class="angucomplete-searching" ng-show="searching" ng-bind="textSearching"></div>
+    <div class="angucomplete-searching" ng-show="!searching && (!results || results.length == 0)" ng-bind="textNoResults"></div>
+    <div class="angucomplete-row" ng-repeat="result in results" ng-click="selectResult(result)" ng-mouseenter="hoverRow($index)" ng-class="{'angucomplete-selected-row': $index == currentIndex}">
+      <div ng-if="imageField" class="angucomplete-image-holder">
+      </div>
+      <div class="angucomplete-title" ng-if="matchClass">
+        <div class="row">
+          <div class="col-md-2" ng-if="result.originalObject.url_picture">
+            <img ng-src="http://api.utiledev.vanam.fr/{{result.originalObject.url_picture}}" height="70" >
+          </div>
+          <div class="col-md-10">
+            <h4 ng-bind-html="result.title"></h4>
+            <p>{{result.originalObject.description}}</p>
+          </div>
+        </div>
+      </div>
+      <div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div>
+      <div ng-if="matchClass && result.description && result.description != ''" class="angucomplete-description" ng-bind-html="result.description"></div>
+      <div ng-if="!matchClass && result.description && result.description != ''" class="angucomplete-description">{{result.description}}</div>
+    </div>
+    
+  </div>
+</div>
+</script>
+
+
+
+
+
+
+<div class="row">
+  <div class="col-sm-12">
+    <form class="card-box table-responsive" ng-submit="vm.updateMouvement()">
+      <h3>Détails du mouvement d’entrée n° {{vm.mouvement.id}} du {{vm.mouvement.insert_date}}</h3>
+      <table id="mouvement_entree" class="table table-striped">
+        <thead ng-dblclick="toogle=!toogle">
+          <tr>
+            <th width="120">Référence </th>
+            <th>Désignation </th>
+            <th>Marque</th>
+            <th>Type</th>
+            <th width="130">Qte</th>
+            <th width="80">Prix achat</th>
+            <th width="110">Zone</th>
+            <th width="80" ng-show="toogle">Prix tarif</th>
+            <th width="80" ng-show="toogle">Prix public</th>
+            <th width="100" ng-show="toogle">Prix vanam</th>
+            <th width="50">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, value) in vm.mouvement.entry_event_details">
+            <td>{{value.reference}} </td>
+            <td>{{value.description}} </td>
+            <td>{{value.brand}}</td>
+            <td>{{value.category}}</td>
+            <td><span data-toggle="modal" data-target="#detailsStock" ng-click="vm.getStock(value);" class="somme_stock">{{ value.quantity || vm.calculerStock(value.stock) }}</span>&nbsp; <span class="lh26">/{{value.qtr}}</span></td>
+            <td><input type="text" ng-model="value.purchase_price" class="w-50 text-center">&nbsp;{{ vm.getDeviseName(vm.mouvement.change_id) }}</td>
+            <td>
+              <div class="row">
+                <!-- <div class="col-xs-4">
+                  <div class="form-group">
+                    <select class="form-control" ng-model="vm.produit.zonage_city_id">
+                      <option class="hidden" value="">MRS</option>
+                      <option value="{{ value.id }}" ng-repeat="(key, value) in vm.zonages track by $index">{{ value.trigram }}</option>
+                    </select>
+                  </div>
+                </div> -->
+                <div class="col-xs-6 no-padder">
+                    <input type="text" class="w-full text-xs text-center" placeholder="Ex : A12" ng-model="value.aisle">
+                </div>
+                <div class="col-xs-6 no-padder">
+                    <input type="text" class="w-full text-xs text-center" placeholder="Ex : PAL9" ng-model="value.palette">
+                </div>
+              </div>
+            </td>
+            <td ng-show="toogle"><input type="text" ng-model="value.sale_rate_price" class="w-50 text-center">&nbsp;{{ vm.getDeviseName(vm.mouvement.change_id) }}</td>
+            
+            <td ng-show="toogle"><input type="text" ng-model="value.sale_public_price" class="w-50 text-center">&nbsp;{{ vm.getDeviseName(vm.mouvement.change_id) }}</td>
+            <td ng-show="toogle"><input type="text" ng-model="value.sale_vanam_price" class="w-50 text-center">&nbsp;{{ vm.getDeviseName(vm.mouvement.change_id) }}</td>
+            
+            <td>
+              <div class="btn btn-xs btn-info" ng-click="vm.openDetailsProduit(value.product_id)" ><i class="fa fa-info"></i></div>
+              <div class="btn btn-xs btn-danger" ng-click="vm.deleteProduct( value.id )" ><i class="fa fa-trash"></i></div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <!-- <tr>
+            <td colspan="{{toogle?11:8}}" class="text-center bg-light">
+              <select class="form-control bg-white" ng-init="vm.nb_elements='50'" ng-model="vm.nb_elements" style="display: inline-block; width: auto;">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="1000">1000</option>
+              </select>
+              <div class="btn btn-sm btn-default" ng-click="vm.current_page=vm.current_page+1; vm.getMouvementByID()">Encore plus ..</div>
+            </td>
+          </tr> -->
+          <tr>
+            <td>
+              Information
+            </td>
+            <td colspan="{{toogle?6:3}}">
+              <textarea class="form-control padder b" ng-model="vm.mouvement.information" rows="4"></textarea>
+            </td>
+            <td colspan="5" align="right">
+              <div data-toggle="modal" data-target="#print" class="btn tbn-sm btn-info">Imprimer</div>
+              <a ui-sref="app.traitements.mouvements.index" class="btn tbn-sm btn-danger">Fermer</a>
+              <button type="submit" class="btn tbn-sm btn-success">Enregistrer</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Nb de colis
+            </td>
+            <td colspan="3">
+              <input type="text" ng-model="vm.mouvement.parcel_nb" class="form-control padder b">
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>
+              Devise  
+              
+            </td>
+            <td colspan="3">
+              <select class="form-control w-sm b" required="" ng-model="vm.mouvement.change_id">
+                <option value="{{ value.id }}" ng-repeat="(key, value) in vm.devises track by $index">{{ value.name }}</option>
+              </select>
+            </td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table> 
+    </form>
+  </div>
+</div>
+
+
+<div class="modal fade" id="detailsStock" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Détails stock</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div class="stock-box" ng-repeat="(key, value) in vm.selected.stock track by $index">
+              <div class="pointure">{{ value.name }}</div>
+              <div class="reel">
+                <span class="text-center w-full" style="height: 37px; display: block;">{{ value.qtr || 0 }}</span>
+              </div>
+              <div class="aterme">
+                <span class="text-center w-full" style="height: 37px; display: block;">{{ value.qtt || 0 }}</span>
+              </div>
+              <div class="nouveau">
+                <input type="text" ng-keydown="($event.keyCode === 13 || $event.keyCode === 9 ) && vm.updateStock(value.range_detail_id,value.product_id, vm.entry_event_detail_id, value.value, $event.keyCode )" ng-blur="vm.updateStock(value.range_detail_id,value.product_id, vm.entry_event_detail_id, value.value )" ng-model="value.value" value="0">
+              </div>
+            </div>
+
+            <div class="text-right">
+              <div class="stock-box somme">
+                <div class="reel" style="width: 100%">
+                  <b>Stock dispo</b>  {{ vm.calculerStock(vm.selected.stock)+vm.produit.qtr }}
+                </div>
+              </div>
+            </div>
+            <div class="text-right m-b-xs m-r-xs">
+              <!-- ng-click="vm.updateMouvement();" -->
+              <div class="btn btn-success btn-xs" data-dismiss="modal" aria-hidden="true">Valider</div>
+              <div class="btn btn-danger btn-xs" data-dismiss="modal" aria-hidden="true">Fermer</div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ajoutStock" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Ajout stock</h3>
+        </div>
+        <div class="panel-body no-padder">
+          <div data-ng-include=" 'modules/mouvements/stock.html' "></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="print" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Choix des prix</h3>
+        </div>
+        <form class="panel-body">
+
+
+            <div class="row">
+              <div class="col-md-6">
+                <label>Prix tarif</label>
+              </div>
+              <div class="col-md-6">
+                <input type="checkbox" id="switch1" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.print.rate_price" switch="bool" />
+                <label for="switch1" data-on-label="Oui" data-off-label="Non"></label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label>Prix d'achat</label>
+              </div>
+              <div class="col-md-6">
+                <input type="checkbox" id="switch2" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.print.purchase_price" switch="bool" />
+                <label for="switch2" data-on-label="Oui" data-off-label="Non"></label>
+              </div>
+
+          </div>
+
+          <div class="text-right">
+            <div class="btn btn-success" ng-click="vm.imprimer()">Générer</div>
+          </div>
+
+
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/ng-template" id="addProduct.html">
+  <div class="addProductModal" data-ng-include=" 'modules/produits/add.html' "></div>
+</script>
+
+<script type="text/ng-template" id="detailsProduit.html">
+  <div class="detailsProduitModal" data-ng-include=" 'modules/produits/details.html' "></div>
+</script>
+
+
+
+ 

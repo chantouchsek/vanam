@@ -1,0 +1,90 @@
+<div class="row" ng-init="vm.totalHt=0; vm.totalTva=0;">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Liste des factures</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card-box no-padder">
+  <form class="wrapper-sm" ng-submit="vm.getInvoices(vm.filter)">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group">
+            <input type="text" class="form-control" ng-model="vm.filter.num_invoice" placeholder=" ">
+            <label>N° Facture</label>
+          </div>
+        </div>
+        <div class="col-md-3" ng-if="app.data.user.role_id != 4">
+          <div class="form-group">
+            <input type="text" class="form-control"  ng-model="vm.filter.client" placeholder=" ">
+            <label>Client</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <input type="date" class="form-control" ng-model="vm.filter.start_date"  placeholder=" ">
+            <label>Date début</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <input type="date" class="form-control" ng-model="vm.filter.end_date"  placeholder=" ">
+            <label>Date fin</label>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-sm btn-success m-t-xs">Trouver</button>
+        </div>
+
+      </div>
+  </form>
+</div>
+ 
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card-box table-responsive">
+      <h6 class="text-center">{{vm.invoices.length}} facture(s) trouvée(s)</h6>
+      <table id="liste_factures" class="table table-striped" ng-init="vm.getInvoices()">
+        <thead>
+          <tr>
+            <th width="100">N° Facture </th>
+            <th>Societe </th>
+            <th width="140">Date</th>
+            <th width="120">HT</th>
+            <th width="120">TVA</th>
+            <th width="120">TTC</th>
+            <th width="150" class="text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, value) in vm.invoices track by $index" style="background: }}">
+            <td align="center">{{value.id}}</td>
+            <td>{{value.company_name}}</td>
+            <td>{{value.creation_date | moment:'DD MMMM YYYY' }}</td>
+            <td ng-init="vm.totalHt=vm.totalHt+value.total_ht*1">{{value.total_ht |currency}}</td>
+            <td ng-init="vm.totalTva=vm.totalTva+value.total_tva*1">{{value.total_tva|currency}}</td>
+            <td>{{(value.total_ht*1 + value.total_tva*1)|currency}}</td>
+            <td class="text-right">
+              <div class="btn btn-xs btn-default" ng-click="vm.print(value.command_id, 1)" ng-if="value.is_invoice_pdf=='1'"><i class="fa fa-print"></i></div>
+              <div ng-if="app.data.user.role_id != 4" class="btn btn-xs btn-success" ng-click="vm.print(value.command_id, 2)" ng-if="value.is_invoice_excel=='1'"><i class="fa fa-file-excel-o"></i></div>
+              <div ng-if="app.data.user.role_id != 4" class="btn btn-xs btn-danger" ng-click="vm.deleteInvoice( value.id )"><i class="fa fa-trash"></i></div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"></td>
+            <td>{{vm.totalHt | currency}}</td>
+            <td>{{vm.totalTva | currency}}</td>
+            <td>{{vm.totalHt + vm.totalTva | currency}}</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>

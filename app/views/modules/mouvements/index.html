@@ -1,0 +1,114 @@
+<div class="row" ng-init="vm.getMouvements(vm.search)">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Mouvements</h4>
+      <div class="pull-right">
+        <a class="btn btn-primary btn-sm waves-effect waves-light" ui-sref="app.traitements.mouvements.importer">Importer un fichier</a>
+        <a class="btn btn-primary btn-sm waves-effect waves-light" ui-sref="app.traitements.mouvements.importer_images">Importer images</a>
+        <a class="btn btn-primary btn-sm waves-effect waves-light" ui-sref="app.traitements.mouvements.add" ng-click="vm.initMouvement()">Ajouter mouvements</a>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card-box no-padder">
+  <form class="row wrapper-sm" ng-submit="vm.getMouvements( vm.search )">
+    <div class="col-md-6">
+      <div class="form-group m-n">
+        <input type="text" class="form-control w-full" placeholder=" " ng-model="vm.search.num_inf_value">
+        <label>N° mouvement / information</label>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group m-n">
+        <input type="date" class="form-control" placeholder=" " ng-model="vm.search.start_date">
+        <label>Début</label>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group m-n">
+        <input type="date" class="form-control" placeholder=" " ng-model="vm.search.end_date">
+        <label>Fin</label>
+      </div>
+    </div>
+    <div class="col-md-2 text-center">
+      <button type="submit" class="btn btn-success">Chercher</button>
+    </div>
+  </form>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card-box table-responsive">
+      <table id="mouvements" class="table table-striped">
+        <thead>
+          <tr>
+            <th>N° mouvement </th>
+            <th>Date entrée </th>
+            <th>Name </th>
+            <th>Informations</th>
+            <th>Quantité</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, value) in vm.mouvements track by $index" ng-dblclick="vm.openMouvement(value.id)">
+            <td>{{ value.id }} </td>
+            <td>{{ value.insert_date }} </td>
+            <td>{{ value.name }} </td>
+            <td>{{ value.information }}</td>
+            <td>{{ value.quantity }}</td>
+             
+            <td style="width: 100px; text-align: center;">
+              <a ui-sref="app.traitements.mouvements.details({id: value.id})" class="btn btn-xs btn-info"><i class="fa fa-pencil"></i></a>
+              <div data-toggle="modal" data-target="#print" ng-click="vm.print_id = value.id" class="btn btn-xs btn-default"><i class="fa fa-print"></i></div>
+              <div class="btn btn-xs btn-danger" ng-click="vm.delete(value.id)"><i class="fa fa-trash"></i></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="print" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Choix des prix</h3>
+        </div>
+        <form class="panel-body">
+
+            <div class="row">
+              <div class="col-md-6">
+                <label>Prix tarif</label>
+              </div>
+              <div class="col-md-6">
+                <input type="checkbox" id="switch1" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.print.rate_price" switch="bool" />
+                <label for="switch1" data-on-label="Oui" data-off-label="Non"></label>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label>Prix d'achat</label>
+              </div>
+              <div class="col-md-6">
+                <input type="checkbox" id="switch2" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.print.purchase_price" switch="bool" />
+                <label for="switch2" data-on-label="Oui" data-off-label="Non"></label>
+              </div>
+            </div>
+
+            <div class="text-right">
+              <div class="btn btn-success" ng-click="vm.imprimer()">Générer</div>
+            </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

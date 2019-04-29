@@ -1,0 +1,258 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Importer fichier</h4>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="card-box">
+  <div class="progress" ng-init="vm.step=1" style="margin: -20px -20px 0px -20px">
+    <div class="progress-bar progress-bar-orange progress-bar-striped" role="progressbar" style="width: {{ vm.step*33.33 }}%;">
+      <span class="sr-only">{{ vm.step/3 }} complet</span>
+    </div>
+  </div>
+  <ul class="nav nav-tabs tabs-bordered nav-steps" style="margin: 0px -20px 0 -20px">
+    <li class="active" ng-click="vm.step=1">
+      <a href="#etape1" ng-click="vm.initMouvement()" data-toggle="tab" aria-expanded="true">
+        <span class="visible-xs"><i class="fa fa-home"></i></span>
+        <span class="hidden-xs">Etape 1</span>
+    </a>
+    </li>
+    <li ng-class="{'disabled':vm.step==2}">
+      <!-- <a href="#etape2" ng-init="vm.getDemo()" data-toggle="tab" aria-expanded="false"> -->
+      <a href="{{ vm.step==2?'#etape2':'#' }}" data-toggle="tab" aria-expanded="false">
+        <span class="visible-xs"><i class="fa fa-camera"></i></span>
+        <span class="hidden-xs">Etape 2</span>
+      </a>
+    </li>
+    <li ng-class="{'disabled':vm.step==3}">
+      <a href="{{ vm.step==3?'#etape3':'#' }}" data-toggle="tab" aria-expanded="false">
+        <span class="visible-xs"><i class="fa fa-trello"></i></span>
+        <span class="hidden-xs">Etape 3</span>
+      </a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="etape1">
+      <form ng-submit="vm.uploadFile()">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="custom-upload-file">
+              <i class="fa fa-upload"></i> {{ vm.file_name || 'Importer' }}
+              <input type="file" name="file" required="" class="form-control">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-info m-t-xs" ng-show="vm.file_name">Envoyer</button>
+          </div>
+        </div>
+        <div class="row" ng-show="vm.file_name">
+          <div class="col-md-4">
+            <select multiple="" class="list-items" id="list1">
+              <option ng-repeat="value in vm.headers | orderBy:'i'  track by value.i" data-i="{{ value.i }}" data-key="{{ value.key }}" class="item">{{ value.value }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <div class="text-center">
+              <div class="btn btn-success" ng-click="vm.lier()">Lier</div>
+            </div>
+            <div class="list-items" id="list3">
+              <div class="result" ng-click="vm.dissocier($index, value[0],value[1])" ng-repeat="(key, value) in vm.liersItems track by $index">
+                <div><span ng-repeat="(k, v) in value[0] track by $index">{{ v.value }}</span></div>
+                <div class="icon">
+                  <i class="icon1 fa fa-link"></i>
+                  <i class="icon2 fa fa-unlink"></i>
+                </div>
+                <div><span ng-repeat="(k, v) in value[1] track by $index">{{ v.value }}</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <select multiple="" class="list-items" id="list2" ng-init="vm.getGammes()">
+              <option class="item" ng-repeat="(key, value) in vm.listItems  | orderBy:'i' track by value.i" data-obligatoire="{{value.obligatoire}}" data-value="{{value.value}}" data-i="{{value.i}}" data-is_range="0">{{value.value}}{{ value.obligatoire==1?'*':'' }}</option>
+              <option class="text-center block" disabled="">Gammes</option>
+              <option class="item gamme" ng-repeat="value in vm.gammeItems | orderBy:'id' track by value.name" data-type="gamme" data-id="{{value.id}}" data-value="{{value.name}}"  data-is_range="1">{{ value.name }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="btn btn-success" ng-show="vm.file_name" ng-click="vm.envoyerLiaisons()">Suivant</div>
+        </div>
+      </form>
+    </div>
+    <div class="tab-pane" id="etape2" ng-init="vm.getCategories(); vm.getBrands(); vm.getGenders(); vm.getSports()">
+        <div class="switch_230">
+          <input type="checkbox" ng-change="vm.toggleProductStatus()" id="switch_status" ng-true-value="1" ng-false-value="0" ng-model="vm.product_status" switch="bool">
+          <label for="switch_status" data-on-label="Afficher tous les produits" data-off-label="Afficher les produits incomplets"></label>
+        </div>
+
+
+      <table class="table table-bordred" id="table_produits">
+        <tr ng-class="{'completed': toggle}" ng-init="toggle = vm.verifStatusRanges(product, $index)" ng-repeat="(key, product) in vm.products track by $index" ng-hide="product.ranges.length == 0">
+          <td width="100" class="toHide">
+            <img src="http://myaco.lemans.org/GED/content/4805C9CE-ECF4-4232-AEF4-3580948695DC.jpg" class="img-responsive" alt="">
+          </td>
+          <td width="200" class="toHide">
+            {{product['Référence']}}
+            <br> {{product['Description']}}
+            <br> {{product['prix achat']}}
+            <p>
+              <span ng-if="product['Marque']" class="badge badge-danger" data-toggle="modal" data-target="#marques" ng-click="vm._marque = product['Marque']" data-marque="{{product['Marque']}}">{{product['Marque']}}</span>
+              <span ng-if="product['Genre']" class="badge badge-danger" data-toggle="modal" data-target="#genres" ng-click="vm._genre = product['Genre']" data-genre="{{product['Genre']}}">{{product['Genre']}}</span>
+              <span ng-if="product['Sport']" class="badge badge-danger" data-toggle="modal" data-target="#sports" ng-click="vm._sport = product['Sport']" data-sport="{{product['Sport']}}">{{product['Sport']}}</span>
+              <span ng-if="product['Categorie']" class="badge badge-danger" data-toggle="modal" data-target="#categories" ng-click="vm._categorie = product['Categorie']" data-categorie="{{product['Categorie']}}">{{product['Categorie']}}</span>
+            </p>
+          </td>
+          <td  class="toHide">
+            <div class="stock-box style2" ng-class="{'rouge': value.status == 'false' }" ng-repeat="(key, value) in product.ranges track by $index">
+              <div class="pointure" ng-click="vm.modalNewGamme(product, value, key)">{{ value.name || key }}</div>
+              <div class="reel">
+                <span class="text-center w-full" style="height: 37px; display: block;">{{value.value}}</span>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <div class="text-right">
+        <div class="btn btn-success" ng-click="vm.envoyerProduits()">Suivant</div>
+      </div>
+    </div>
+    <div class="tab-pane" id="etape3">
+      <div class="alert alert-success" role="alert" ng-if="vm.step3.msg">
+        {{ vm.step3.msg }}
+      </div>
+
+      <div class="alert alert-success" role="alert" ng-if="vm.step3.products_ok">
+        {{ vm.step3.products_ok.msg }}
+      </div>
+
+      <div class="alert alert-warning" role="alert" ng-if="vm.step3.products_without_ranges.msg">
+        {{ vm.step3.products_without_ranges.msg }}
+      </div>
+
+      <div class="alert alert-warning" ng-repeat="(key, value) in vm.step3.products_without_ranges.products track by $index" role="alert">
+          <strong>Reférence produit : </strong> {{ value }}
+      </div>
+
+      <div class="alert alert-danger" role="alert" ng-if="vm.step3.products_nok.msg">
+        {{ vm.step3.products_nok.msg }}
+      </div>
+
+      <div class="alert alert-danger" ng-repeat="(key, value) in vm.step3.products_nok.products track by $index" role="alert">
+          <strong>Reférence : </strong> {{ value }}
+      </div>
+    </div>
+     
+  </div>
+</div>
+<div class="modal fade" id="gamme" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Gamme</h3>
+        </div>
+        <div class="gamme_list wrapper-xs" ng-hide="vm.new">
+          <div class="btn btn-info w-full m-b-xs" ng-click="vm.new=1">Nouvel attribut de gamme</div>
+          <div class="btn btn-white w-full m-b-xs" ng-click="vm.parent_gamme_id=0">Nouvelle gamme</div>
+          <div class="text-center">ou</div>
+          <div class="panel-group panel-group-joined" id="accordion">
+            <div class="panel panel-info" ng-hide="vm.parent_gamme_id && vm.parent_gamme_id != value.id" ng-repeat="(key, value) in vm.gammes track by $index">
+              <div ng-click="vm.range_details=[];" class="panel-heading collapsed wrapper-xs text-white" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$index}}">
+                {{ value.name }}
+              </div>
+              <div id="collapse{{$index}}" class="panel-collapse collapse">
+                <div class="panel-body">
+                  <div class="btn btn-default btn-sm w-full" ng-click="vm.addGamme(v)" ng-repeat="(k, v) in value.ranges track by $index">{{ v.name }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form class="panel-body" ng-submit="vm.addGamme()" ng-show="vm.new">
+          <input type="text" class="form-control" placeholder="Gamme" ng-model="vm.gamme.name">
+          <div class="btn btn-danger w-full m-t-xs" ng-click="vm.new=0">Annuler</div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="marques" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Marques</h3>
+        </div>
+        <div class="wrapper">
+          <div class="row">
+            <div class="col-md-3" ng-repeat="(k, v) in vm.brands track by $index">
+              <div ng-click="vm.lierMarque( vm._marque, v )" class="btn btn-default btn-sm w-full m-b-xs">{{ v.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="genres" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Genres</h3>
+        </div>
+        <div class="wrapper">
+          <div class="row">
+            <div class="col-md-12" ng-repeat="(k, v) in vm.genders track by $index">
+              <div ng-click="vm.lierGenre( vm._genre, v )" class="btn btn-default btn-sm w-full m-b-xs">{{ v.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="sports" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Sports</h3>
+        </div>
+        <div class="wrapper">
+          <div class="row">
+            <div class="col-md-12" ng-repeat="(k, v) in vm.sports track by $index">
+              <div ng-click="vm.lierSport( vm._sport, v )" class="btn btn-default btn-sm w-full m-b-xs">{{ v.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="categories" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">Categories</h3>
+        </div>
+        <div class="wrapper">
+          <div class="row">
+            <div class="col-md-3" ng-repeat="(k, v) in vm.categories track by $index">
+              <div ng-click="vm.lierCategorie( vm._categorie, v )" class="btn btn-default btn-sm w-full m-b-xs">{{ v.name }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

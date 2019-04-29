@@ -1,0 +1,565 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="page-title-box">
+      <h4 class="page-title">Clients</h4>
+      <div class="pull-right">
+        <button class="btn btn-primary btn-sm waves-effect waves-light" data-toggle="modal" ng-click="vm.editing=0; vm.addresses= {}; vm.update_client = 0; vm.info = {referer_contact_id: '1'}" data-target="#addUser">Ajouter client</button>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="addUser" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-0 b-0">
+      <div class="panel panel-color panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="panel-title">{{ vm.editing ? 'Modifier':'Ajouter' }} client</h3>
+        </div>
+        <div class="panel-body">
+          <ul class="nav nav-tabs">
+            <li class="active">
+              <a href="#informations" data-toggle="tab" aria-expanded="true">
+                <span class="visible-xs"><i class="fa fa-home"></i></span>
+                <span class="hidden-xs">Information</span>
+              </a>
+            </li>
+            <li>
+              <a href="#adresse" data-toggle="tab" aria-expanded="false">
+                <span class="visible-xs"><i class="fa fa-envelope"></i></span>
+                <span class="hidden-xs">Adresses</span>
+              </a>
+            </li>
+            <li>
+              <a href="#live" data-toggle="tab" aria-expanded="false">
+                <span class="visible-xs"><i class="fa fa-lock"></i></span>
+                <span class="hidden-xs">Live</span>
+              </a>
+            </li>
+            <li>
+              <a href="#stats" data-toggle="tab" aria-expanded="false">
+                <span class="visible-xs"><i class="mdi mdi-view-dashboard"></i></span>
+                <span class="hidden-xs">Stats</span>
+              </a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <form  class="tab-pane active" id="informations" ng-submit="vm.editing?vm.updateInfos():vm.saveInfos()">
+              <div class="row">
+                <div class="col-md-4">
+                  <h5>Société</h5>
+                  <div class="form-group">
+                    <input type="text" required="" class="form-control" ng-model="vm.info.company_name" placeholder=" ">
+                    <label>Société*</label>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder=" " ng-model="vm.info.siret">
+                    <label>Siret</label>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" class="form-control" placeholder=" " ng-model="vm.info.tva_intra">
+                    <label>TVA intra</label>
+                  </div>
+                  <div class="portlet no-box">
+                    <div class="portlet-heading portlet-default no-padder">
+                      <h3 class="portlet-title text-dark" data-toggle="collapse" data-parent="#accordion1">
+                      <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default" class="collapsed"  aria-expanded="false"> Plus d’informations </a>
+                      </h3>
+                      <div class="portlet-widgets">
+                        <a data-toggle="collapse" data-parent="#accordion1" href="#bg-default" class="collapsed" aria-expanded="false"><i class="ion-minus-round"></i></a>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+
+                    <div id="bg-default" class="panel-collapse collapse" aria-expanded="false">
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder=" " ng-model="vm.info.ape_code">
+                        <label>Code APE</label>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder=" " ng-model="vm.info.capital">
+                        <label>Capital</label>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder=" " ng-model="vm.info.site_url">
+                        <label>Site</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <h5>Contact</h5>
+                  <div class="row b-light b-l">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <input required="" type="text" class="form-control" placeholder=" " ng-model="vm.info.contact_name">
+                        <label>Nom*</label>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" required="" class="form-control" placeholder=" " ng-model="vm.info.contact_firstname">
+                        <label>Prénom*</label>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder=" " ng-model="vm.info.contact_tel_line">
+                        <label>Téléphone</label>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder=" " ng-model="vm.info.contact_mobile_line">
+                        <label>Portable</label>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" class="form-control" placeholder=" " ng-model="vm.info.contact_fax">
+                        <label>Fax</label>
+                      </div>
+                      <div class="form-group">
+                        <input type="email" required="" class="form-control" placeholder=" " ng-model="vm.info.contact_email">
+                        <label>Email*</label>
+                      </div>
+                    </div>
+                  </div>
+                  <h5>Contact du compte</h5>
+                  <div class="form-group w-lg" ng-init="vm.getManagers();">
+                    <select class="form-control" ng-model="vm.info.referer_contact_id">
+                      <option value="{{ value.id }}" ng-repeat="(key, value) in vm.managers track by $index">{{value.name}} {{value.firstname}}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <button type="submit" class="btn btn-primary waves-effect waves-light">Enregistrer</button>
+              </div>
+            </form>
+            <div class="tab-pane" id="adresse">
+              <div class="panel-group panel-group-joined" id="accordion-adresse" ng-init="vm.getAddresses()">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-adresse" href="#collapseOne">
+                      Ajouter une nouvelle adresse
+                    </a>
+                    </h4>
+                  </div>
+                  <div id="collapseOne" class="panel-collapse collapse"  ng-class="{'in': vm.addresses.length == 0}">
+                    <div class="panel-body">
+                      <form ng-submit="vm.addAddress()">
+                        <div class="form-group">
+                          <input type="text" required="" class="form-control w-xxl" ng-model="vm.address.name" placeholder=" ">
+                          <label>Nom de l'adresse</label>
+                        </div>
+                        <div class="form-group">
+                          <input type="text" required="" class="form-control" placeholder=" " ng-model="vm.address.address">
+                          <label>Adresse</label>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <input type="text" class="form-control" required="" placeholder=" " ng-model="vm.address.postal_code">
+                              <label>Code postal</label>
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <input type="text" class="form-control" required="" placeholder=" " ng-model="vm.address.city">
+                              <label>Ville</label>
+                            </div>
+                          </div>
+                          <div class="col-md-4">
+                            <div class="form-group">
+                              <select class="form-control" required=""  ng-model="vm.address.country">
+                                <option value="" class="hidden">Pays</option>
+                                <option value="{{ value.id }}"   ng-repeat="(key, value) in vm.countries | orderBy:'name' track by $index">{{ value.name }}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <textarea class="form-control" placeholder="Commentaire" rows="3" ng-model="vm.address.comment"></textarea>
+                        </div>
+                        <div class="form-group">
+                          <div class="row">
+                            <div class="col-md-4">
+                              <label>Adresse principale de livraison</label>
+                            </div>
+                            <div class="col-md-2">
+                              <input type="checkbox" id="switch1" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.address.is_delivery_address" switch="bool" />
+                              <label for="switch1" data-on-label="Oui" data-off-label="Non"></label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="row">
+                            <div class="col-md-4">
+                              <label>Adresse principale de facturation</label>
+                            </div>
+                            <div class="col-md-2">
+                              <input type="checkbox" id="switch2" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.address.is_billing_address" switch="bool" />
+                              <label for="switch2" data-on-label="Oui" data-off-label="Non"></label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="text-right">
+                          <button type="reset" class="btn btn-default waves-effect">Annuler</button>
+                          <button type="submit" class="btn btn-primary waves-effect waves-light">Enregistrer</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-primary" ng-repeat="(key, value) in vm.addresses track by $index">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-adresse" href="#collapse{{ $index }}"  class="collapsed">
+                      {{ value.name || value.address }}
+                    </a>
+                    </h4>
+                  </div>
+                  <form id="collapse{{ $index }}" class="panel-collapse collapse" ng-class="{'in': $index == 0}" ng-submit="vm.updateAddress(value)">
+                    <div class="panel-body">
+                      <div class="form-group">
+                        <input type="text" required="" ng-model="value.name" class="form-control w-xxl" placeholder=" ">
+                        <label>Nom de l'adresse</label>
+                      </div>
+                      <div class="form-group">
+                        <input type="text" required="" ng-model="value.address" class="form-control" placeholder=" ">
+                        <label>Adresse</label>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <input type="text" class="form-control" required="" ng-model="value.postal_code" placeholder=" ">
+                            <label>Code postal</label>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <input type="text" class="form-control" required="" ng-model="value.city" placeholder=" ">
+                            <label>Ville</label>
+                          </div>
+                        </div>
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <select class="form-control" required=""  ng-model="value.country">
+                              <option value="" class="hidden">Pays</option>
+                              <option value="{{ value.id }}" ng-repeat="(key, value) in vm.countries  track by $index">{{ value.name }}</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <textarea class="form-control" placeholder="Commentaire" ng-model="value.comment" rows="3"></textarea>
+                      </div>
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <label>Adresse principale de livraison</label>
+                          </div>
+                          <div class="col-md-2">
+                            <input type="checkbox" id="delivery{{ $index }}" ng-true-value="'1'" ng-false-value="'0'" ng-model="value.is_delivery_address" switch="bool" />
+                            <label for="delivery{{ $index }}" data-on-label="Oui" data-off-label="Non"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="row">
+                          <div class="col-md-4">
+                            <label>Adresse principale de facturation</label>
+                          </div>
+                          <div class="col-md-2">
+                            <input type="checkbox" id="billing{{ $index }}" ng-true-value="'1'" ng-false-value="'0'" ng-model="value.is_billing_address" switch="bool" />
+                            <label for="billing{{ $index }}" data-on-label="Oui" data-off-label="Non"></label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-right">
+                        <div ng-click="vm.deleteAddress( value.id, value.client_id )" class="btn btn-danger waves-effect"> <i class="fa fa-trash"></i> Supprimer l'adresse</div>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">Enregistrer</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="tab-pane" id="live">
+
+              <div class="row">
+                <div class="col-md-3">
+                  <label> Autorisation accès UTILE </label>
+                </div>
+                <div class="col-md-2">
+                  <input type="checkbox" id="switch3" ng-true-value="'1'" ng-false-value="'0'" ng-model="vm.info.is_authorization_access" switch="bool" />
+                  <label for="switch3" data-on-label="Oui" data-off-label="Non"></label>
+                </div>
+              </div>
+              <form  ng-submit="vm.info.authorization.id?vm.updateAuthorization():vm.saveAuthorization()">
+                <div ng-show="vm.info.is_authorization_access == 1" class="row">
+                  <div class="col-md-7">
+                    <div class="form-group">
+                      <input type="email" required="" class="form-control" placeholder="email" ng-model="vm.info.authorization.authorization_contact_mail">
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="input-group">
+                      <div>
+                        <span class="input-group-btn">
+                          <input type="{{ vm.passVisible ? 'text':'password' }}" id="password" required="" class="form-control" placeholder="Mot de passe" ng-model="vm.info.authorization.authorization_contact_passwd">
+                          <button type="button" class="btn waves-effect waves-light btn-primary" ng-click="vm.passVisible = !vm.passVisible"><i class="fa fa-eye"></i></button>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div ng-show="vm.info.is_authorization_access == 1" class="row">
+                  <div class="col-md-12" ng-init="vm.getCategories()">
+                    <div class="row m-b-xs">
+                      <div class="col-md-2">
+                        <small>Catégories</small>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="btn btn-xs btn-info" ng-click="vm.triggerSelectAllCategories(1)" > <i class=" fa fa-hand-pointer-o"></i> Affecter toutes les catégories</div>
+                        <div class="btn btn-xs btn-danger" ng-click="vm.triggerSelectAllCategories(0)" > <i class=" fa fa-trash"></i> Retirer toutes les catégories</div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <ui-select multiple ng-model="vm.info.authorization.categories" theme="bootstrap" on-select="vm.updateCategories(vm.info.authorization.categories)"  on-remove="vm.updateCategories(vm.info.authorization.categories)"  close-on-select="true"  >
+                      <ui-select-match allow-clear="true">{{$item.name}}</ui-select-match>
+                      <ui-select-choices repeat="value in vm.categories | orderBy:'name' | filter:$select.search">
+                      {{value.name}}
+                      </ui-select-choices>
+                      </ui-select>
+                    </div>
+                  </div>
+                  <div class="col-md-12" ng-init="vm.getBrands()">
+                    <div class="row m-b-xs">
+                      <div class="col-md-2">
+                        <small>Marques</small>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="btn btn-xs btn-info" ng-click="vm.triggerSelectAllBrands(1)"> <i class=" fa fa-hand-pointer-o"></i> Affecter toutes les marques</div>
+                        <div class="btn btn-xs btn-danger" ng-click="vm.triggerSelectAllBrands(0)" > <i class=" fa fa-trash"></i> Retirer toutes les marques</div>
+                      </div>
+                    </div>
+                    <div class="form-group" >
+                      <ui-select multiple ng-model="vm.info.authorization.brands" theme="bootstrap" on-select="vm.updateBrands(vm.info.authorization.brands)" on-remove="vm.updateBrands(vm.info.authorization.brands)"  close-on-select="true"  >
+                      <ui-select-match allow-clear="true">{{$item.name}}</ui-select-match>
+                      <ui-select-choices repeat="value in vm.brands| orderBy:'name' | filter:$select.search">
+                      {{value.name}}
+                      </ui-select-choices>
+                      </ui-select>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <button type="submit" class="btn btn-primary waves-effect waves-light">Enregistrer</button>
+                </div>
+              </form>
+
+            </div>
+            <div class="tab-pane" id="stats">
+              <div class="row text-center">
+                <div class="col-md-3">
+                  <div class="card-box widget-box-one">
+                    <div class="wigdet-one-content">
+                      <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Chiffre d'affaires</p>
+                      <h2 class="text-danger"><span>{{ vm.total_commands | currency }} </span></h2>
+                      <p class="text-muted m-0">Commande en cours</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="card-box widget-box-one">
+                    <div class="wigdet-one-content">
+                      <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Chiffre d'affaires</p>
+                      <h2 class="text-dark"><span>{{ vm.total_invoices | currency }}</span> </h2>
+                      <p class="text-muted m-0">Factures</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="card-box widget-box-one">
+                    <div class="wigdet-one-content">
+                      <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Chiffre d'affaires</p>
+                      <h2 class="text-primary"><span>{{ vm.total_quotations | currency }}</span> </h2>
+                      <p class="text-muted m-0">Devis</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <div class="card-box widget-box-one">
+                    <div class="wigdet-one-content">
+                      <p class="m-0 text-uppercase font-600 font-secondary text-overflow">Chiffre d'affaires</p>
+                      <h2 class="text-warning"><span>{{ (vm.total_commands + vm.total_invoices) | currency }}</span> </h2>
+                      <p class="text-muted m-0">Total</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-group panel-group-joined" id="accordion-listing">
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-listing" href="#devis">
+                      Devis
+                    </a>
+                    </h4>
+                  </div>
+                  <div id="devis" class="panel-collapse collapse  in">
+                    <div class="panel-body">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>N°</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th width="80">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="(key, value) in vm.stats.quotations track by $index">
+                            <td>{{value.id}}</td>
+                            <td>{{value.creation_date}}</td>
+                            <td>{{value.total | currency}}</td>
+                            <td class="text-center">
+                              <a data-dismiss="modal" ui-sref="app.devis.details({id : value.id})" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-listing" href="#commandes"  class="collapsed">
+                      Commandes
+                    </a>
+                    </h4>
+                  </div>
+                  <div id="commandes" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>N°</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th width="80">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="(key, value) in vm.stats.commands track by $index">
+                            <td>{{value.id}}</td>
+                            <td>{{value.creation_date}}</td>
+                            <td>{{value.total | currency}}</td>
+                            <td class="text-center">
+                              <a data-dismiss="modal" ui-sref="app.commande.details({id : value.id})" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="panel panel-primary">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion-listing" href="#factures"  class="collapsed">
+                      Factures
+                    </a>
+                    </h4>
+                  </div>
+                  <div id="factures" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>N°</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th width="80">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="(key, value) in vm.stats.invoices track by $index">
+                            <td>{{value.id}}</td>
+                            <td>{{value.creation_date}}</td>
+                            <td>{{value.total | currency}}</td>
+                            <td class="text-center">
+                              <a data-dismiss="modal" ui-sref="app.facture.details({id : value.id})" class="btn btn-xs btn-info"><i class="fa fa-eye"></i></a>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card-box w-xxl no-padder">
+  <form class="row wrapper-sm" ng-submit="vm.getClients( vm.search )">
+    <div class="col-md-8">
+      <div class="form-group m-n">
+        <input type="text" class="form-control" placeholder=" " ng-model="vm.search">
+        <label>Rechercher...</label>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-success">Chercher</button>
+    </div>
+  </form>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card-box table-responsive">
+      <div class="dropdown pull-right">
+        <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
+          <h3 class="m-0 text-muted"><i class="mdi mdi-dots-vertical"></i></h3>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+          <li><a ng-click="vm.getFile(1)">Export Excel</a></li>
+        </ul>
+      </div>
+      <table id="clients" class="table table-striped">
+        <thead>
+          <tr>
+            <th>Nom société </th>
+            <th>Nom contact </th>
+            <th>mail</th>
+            <th>ville</th>
+            <th>Pays</th>
+            <th>Live</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, value) in vm.clients track by $index" id="c-{{ value.id }}">
+            <td>{{ value.company_name }} </td>
+            <td>{{ value.contact }} </td>
+            <td>{{ value.contact_email }}</td>
+            <td>{{ value.city }}</td>
+            <td width="140">{{ value.country }}</td>
+            <td>
+              <i ng-if="value.is_authorization_access == 0" class="fa fa-circle text-danger"><span style="visibility: hidden;">non</span></i>
+              <i ng-if="value.is_authorization_access == 1" class="fa fa-circle text-success"><span style="visibility: hidden;">oui</span></i>
+            </td>
+            <td style="width: 100px; text-align: center;">
+              <div class="btn btn-xs btn-info" ng-click="vm.info={}; vm.getClientById( value.id )" data-toggle="modal" data-target="#addUser" ng-click="vm.edit( value )"><i class="fa fa-pencil"></i></div>
+              <div class="btn btn-xs btn-danger" ng-click="vm.delete(value.id)"><i class="fa fa-trash"></i></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

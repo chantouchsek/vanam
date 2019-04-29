@@ -1,0 +1,31 @@
+<div id="preloader">
+  <div id="status">
+    <div class="spinner">
+      <div class="spinner-wrapper">
+        <div class="rotator">
+          <div class="inner-spin"></div>
+          <div class="inner-spin"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="wrapper">
+  <div class="topbar" data-ng-include=" 'partials/topbar.html' "></div>
+  <div class="left side-menu" data-ng-include=" 'partials/navbar.html' "></div>
+  <div class="content-page">  
+    <div class="content">
+      <div class="container">
+          <div ui-view></div>
+      </div>
+    </div>
+    <footer class="footer text-right" data-ng-include=" 'partials/footer.html' "></footer>
+  </div>
+</div>
+
+
+<div class="loader hidden">
+  <svg class="circular" viewBox="25 25 50 50">
+    <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+  </svg>
+</div>
